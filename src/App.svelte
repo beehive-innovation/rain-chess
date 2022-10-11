@@ -4,14 +4,12 @@
   import Modal from "svelte-simple-modal";
 
   import ToyToken from "$routes/toy-token/ToyToken.svelte";
-  import DeployersTokens from "$routes/toy-token/DeployersToken.svelte";
 
   
   let routes = {};
 
   routes = {
     // Using named parameters, with last being optional
-    "/deployer/*": DeployersTokens,
 
     "/": ToyToken,
 

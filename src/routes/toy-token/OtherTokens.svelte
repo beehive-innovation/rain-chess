@@ -9,26 +9,48 @@
     import SectionBody from './SectionBody.svelte';
     import Section from './Section.svelte';
     import SectionHeading from './SectionHeading.svelte';
-    import { VerifyConractDetails } from '$src/constants';
+    import { EmissionConractDetails } from '$src/constants';
     import { getContractAddress } from 'ethers/lib/utils';
 
-  let walletBalance;
+  let walletBalance, decimals;
   const getContract = async () =>{
-    let emissionsContract = ethers.utils.isAddress(VerifyConractDetails.contractAddress || "") ? new EmissionsERC20(VerifyConractDetails.contractAddress, $signer): null;
+    let emissionsContract = ethers.utils.isAddress(EmissionConractDetails.contractAddress || "") ? new EmissionsERC20(EmissionConractDetails.contractAddress, $signer): null;
     walletBalance =  await emissionsContract.balanceOf($signerAddress)
+    decimals = await emissionsContract.decimals()
   }
 
-  $: if($signerAddress && VerifyConractDetails.contractAddress) {
+  $: if($signerAddress && EmissionConractDetails.contractAddress) {
       getContract()
     }
 </script>
 
 <div class="w-full">
   <div class="flex flex-col gap-y-6 p-2">
-        <Section>
-          <SectionHeading>Wallet Details</SectionHeading>
+      <Section>
+          <SectionHeading>Chess Token Details</SectionHeading>
           {#if $signerAddress}
             <SectionBody>
+              <Item>
+                <Label>Wallet Address :</Label>
+                <Info>
+                  {$signerAddress}
+                </Info>
+              </Item>
+              <Item>
+                <Label>Wallet Balance :</Label>
+                <Info>
+                  {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN
+                </Info>
+              </Item>
+            </SectionBody>
+          {:else}
+            <span class="p-4">Please Connect your wallet</span>
+          {/if}
+      </Section>
+      <Section>
+        <SectionHeading>Enery Token Details</SectionHeading>
+        {#if $signerAddress}
+          <SectionBody>
             <Item>
               <Label>Wallet Address :</Label>
               <Info>
@@ -38,13 +60,13 @@
             <Item>
               <Label>Wallet Balance :</Label>
               <Info>
-                {walletBalance?.toString()} Chess TKN
+                {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Energy TKN
               </Info>
             </Item>
           </SectionBody>
-          {:else}
+        {:else}
           <span class="p-4">Please Connect your wallet</span>
         {/if}
-      </Section>
+    </Section>
 </div>
 </div>

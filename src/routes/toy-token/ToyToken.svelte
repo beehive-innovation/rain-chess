@@ -20,9 +20,8 @@
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
 import {EmissionsERC20} from "rain-sdk" 
 import { ethers } from 'ethers';  
-
-  import AddressLibrary from "$routes/address-library/AddressLibrary.svelte";
   import axios from 'axios'
+    import { EmissionConractDetails } from "$src/constants";
   const { open } = getContext('simple-modal')
 
   let fields: any = {};
@@ -62,30 +61,44 @@ import { ethers } from 'ethers';
     }
   }
 
-
   const handleClick = async () =>{ 
    
-    let id = tweetURL.split('/').pop() 
-  
-    let verifyReq
-    if(option.label.toLowerCase() == 'register'){
-      verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
-        tweetId :  id
-      })  
-      
-    }else if(option.label.toLowerCase() == 'verify game'){
-      let address = await $signer.getAddress() 
+   if(!claimFlag){
+     let id = tweetURL.split('/').pop() 
+   
+     let verifyReq
+     if(option.value == 0){
+       verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
+         tweetId :  id
+       })  
        
-      verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
-        tweetId :  id ,
-        address : address.toLowerCase()
-      })   
-    }  
-    console.log(verifyReq)
-    simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
-    tweetURL = `` 
-    claimFlag = true
-  }
+     }else if(option.value == 1){
+       let address = await $signer.getAddress() 
+       
+       verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
+         tweetId :  id ,
+         address : address.toLowerCase()
+       })   
+     }  
+     console.log(verifyReq)
+     simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
+     tweetURL = `` 
+     claimFlag = !claimFlag
+
+   }else{
+     let emissionsContract = new EmissionsERC20(EmissionConractDetails.contractAddress, $signer)   
+
+     let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
+         gasPrice : ethers.utils.parseUnits('350', 'gwei'),
+         gasLimit :  '200000'
+     })  
+
+     let reuslt = await tx.wait()
+     console.log(reuslt )  
+
+     claimFlag = !claimFlag
+   }
+}
   const getExpressions = () =>{
     console.log("demo");
     
@@ -100,22 +113,6 @@ import { ethers } from 'ethers';
     document.getElementById("express").style.display = "grid";
       if(option.value == 1) document.getElementById("exp").style.display = "none";
   } 
-
-  const claimCall = async () => {   
-    let address = await $signer.getAddress() 
-    let verifyContract = new EmissionsERC20('0x8fbf820107b88a54714ebe6debc26547ce31d914', $signer)   
-
-    let tx = await verifyContract.claim( address ,ethers.constants.AddressZero , {
-        gasPrice : ethers.utils.parseUnits('350', 'gwei'),
-        gasLimit :  '200000'
-    })  
-
-    let reuslt = await tx.wait()
-    console.log(reuslt )  
-
-     
-    claimFlag = false
-  }
 
 </script>
 
@@ -206,13 +203,13 @@ import { ethers } from 'ethers';
           </div>
           <div id="express" style="display: none;">
           <div class="grid grid-cols-7 gap-4 items-stretch" >
-            <div class="col-span-4 flex flex-col gap-y-4">
+            <div class="col-span-4 flex flex-col gap-y-4 break-words">
               <Parser vmStateConfig={parserVmStateConfig} />
             </div>
             <div class="col-span-3">
-              <div class="bg-amber-200 rounded-lg p-4 h-full">
+              <div class="bg-amber-200 rounded-lg p-4 h-full ">
 
-                <div class="font-mono text-black text-sm" >https://twitter.com/sid_bhoite/status/1578031489836781571
+                <div class="font-mono text-black text-sm break-words" >
                   <span>Simulated output: </span>
                   <span>
                     {#if $signer}
@@ -230,13 +227,7 @@ import { ethers } from 'ethers';
             </div>
           </div>
           <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-
-            {#if !claimFlag}
-                <Button shrink disabled={!$signer} on:click={handleClick}>Submit</Button>
-            {:else}
-                <Button  shrink disabled={!$signer} on:click={claimCall}>Claim</Button>
-            {/if}
-            
+              <Button shrink disabled={!$signer} on:click={handleClick}> {!claimFlag ? "Submit" : "Claim"} </Button>
             {#if !$signer}
             <span class="text-gray-600">Connect your wallet to deploy</span>
             {/if}
@@ -259,6 +250,12 @@ import { ethers } from 'ethers';
               <span slot="label"> Select The Option: </span>
         </Select>
         <div id="exp" style="display: none;">
+          <div class="grid grid-cols-2 gap-4 pb-4">
+            <Item>
+              <Label>You can {tknOption?.value == 0 ? "Buy token" : "Stake Token"} : </Label>
+              <Info>{tknOption?.value == 0 ? "10 ETKN/0.01 Matic" : "10 ETKN/0.01 Chess TKN"}</Info>
+            </Item>
+          </div>
           <div class="grid grid-cols-2 gap-4">
             <Input
               type="text"
