@@ -62,15 +62,6 @@ import { ethers } from 'ethers';
     }
   }
 
-  const getExpressions = () =>{
-    console.log("demo");
-    
-  }
-
-  const calculateRate = () =>{
-    console.log("demo");
-    
-  }
 
   const handleClick = async () =>{ 
    
@@ -94,13 +85,18 @@ import { ethers } from 'ethers';
     simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
     tweetURL = `` 
     claimFlag = true
+  }
+  const getExpressions = () =>{
+    console.log("demo");
     
-  } 
+  }
+
+  const calculateRate = () =>{
+    console.log("demo");
+    
+  }
 
   const handleClick2 = async () => { 
-
-   
- 
     document.getElementById("express").style.display = "grid";
       if(option.value == 1) document.getElementById("exp").style.display = "none";
   } 
@@ -194,6 +190,7 @@ import { ethers } from 'ethers';
             </Input>
             <Select
               items={Options}
+              bind:value={option}
               on:change={() => {
                   if(option.value != 2) document.getElementById("express").style.display = "grid";
                   else document.getElementById("express").style.display = "none";
@@ -203,7 +200,6 @@ import { ethers } from 'ethers';
             </Select>
           </div>
 
-          
           <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
             <IconLibrary width={30} icon="tip" />
             <div class="max-w-prose">Remember - You need energy to Register and Verify.</div>
