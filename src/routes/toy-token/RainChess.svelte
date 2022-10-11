@@ -13,15 +13,15 @@
   import Item from "$routes/toy-token/Item.svelte";
   import { writable, type Writable } from "svelte/store";
   import IconLibrary from "$components/IconLibrary.svelte";
-  import OtherTokens from "$routes/toy-token/OtherTokens.svelte";
+  import OtherTokens from "$routes/toy-token/TokensInfo.svelte";
   import { getContext } from "svelte";
   import { push } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
-import {EmissionsERC20} from "rain-sdk" 
-import { ethers } from 'ethers';  
+  import {EmissionsERC20} from "rain-sdk" 
+  import { ethers } from 'ethers';  
   import axios from 'axios'
-    import { EmissionConractDetails } from "$src/constants";
+  import { EmissionContracts } from "$src/constants";
   const { open } = getContext('simple-modal')
 
   let fields: any = {};
@@ -86,7 +86,7 @@ import { ethers } from 'ethers';
      claimFlag = !claimFlag
 
    }else{
-     let emissionsContract = new EmissionsERC20(EmissionConractDetails.contractAddress, $signer)   
+     let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
 
      let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
          gasPrice : ethers.utils.parseUnits('350', 'gwei'),
@@ -98,26 +98,10 @@ import { ethers } from 'ethers';
 
      claimFlag = !claimFlag
    }
-}
-  const getExpressions = () =>{
-    console.log("demo");
-    
-  }
-
-  const calculateRate = () =>{
-    console.log("demo");
-    
-  }
-
-  const handleClick2 = async () => { 
-    document.getElementById("express").style.display = "grid";
-      if(option.value == 1) document.getElementById("exp").style.display = "none";
-  }  
+} 
 
   const handleEnergy = async () => {  
- 
-
-    let emissionsContract = new EmissionsERC20(EmissionConractDetails.energyContractAddress, $signer)   
+    let emissionsContract = new EmissionsERC20(EmissionContracts.energyContractAddress, $signer)   
 
      let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
          gasPrice : ethers.utils.parseUnits('350', 'gwei'),
@@ -132,33 +116,31 @@ import { ethers } from 'ethers';
 </script>
 
 <div class="flex gap-x-3 relative">
-
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
-
     <span class="text-3xl font-semibold">Rain Chess</span>
-
-    <div class="mb-2 flex flex-col w-full">
-      <Info>
-        <div class='row mb-2'>
-        <div class=' d-flex align-items-center'>
+    <div class="mb-2 flex flex-col w-full space-y-4">
+      <div class="grid grid-cols-12 items-center" >
+        <div class="col-span-1 flex flex-col gap-y-4">
           <img src='../../../public/assets/twitter.png' width='32' height='32' alt='twitter' class='me-4' />
-          <p>
-          Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
-          Copy-paste the tweets URL into the above input box and fire away!
-          </p>
+        </div>
+        <div class="col-span-11">
+            <p>
+              Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
+              Copy-paste the tweets URL into the above input box and fire away!
+            </p>
+        </div>
       </div>
-      <div class=' d-flex align-items-center'>
+      <div class="grid grid-cols-12 items-center" >
+        <div class="col-span-1 flex flex-col gap-y-4">
           <img src='../../../public/assets/lichess.svg' width='32' height='32' alt='twitter' class='me-4' />
-          <p>
-          Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
-          Copy-paste the tweets URL into the above input box and fire away!
-          </p>
-      </div> 
-    </div>  
-
-
-      </Info>
-      <!-- <div>example expressions...</div> -->
+        </div>
+        <div class="col-span-11">
+            <p>
+              Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
+              Copy-paste the tweets URL into the above input box and fire away!
+            </p>
+        </div>
+      </div>
     </div>
     <Section>
       <SectionHeading>Contract</SectionHeading>
@@ -166,8 +148,11 @@ import { ethers } from 'ethers';
         <Item>
           <Label>Name</Label> 
           <Info> 
-            <img src="../../../public/assets/knight2.png" class="h-6 w-6" />
-            Chess TKN</Info>
+            <span class="flex flex-row space-x-4">
+              <img src="../../../public/assets/knight2.png" class="h-6 w-6" /> 
+              <span>Chess TKN</span>
+            </span>
+          </Info>
         </Item>
         <Item>
           <Label>Source</Label>
@@ -188,7 +173,7 @@ import { ethers } from 'ethers';
       <SectionHeading>Expressions (1)</SectionHeading>
       <SectionBody>
         <span class="text-xl font-semibold">Claimable amount expression</span>
-          <div class="max-w-prose">Enter the tweet URL and check claimable  <img src="../../../public/assets/knight2.png" class="h-6 w-6" /> ChessTKN</div>
+          <div class="max-w-prose">Enter the tweet URL and check claimable</div>
           <div class="grid grid-cols-2 gap-4">
             <Input
               type="text"

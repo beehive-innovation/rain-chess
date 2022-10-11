@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { signerAddress, signer, provider } from 'svelte-ethers-store'
-  import { EmissionsERC20, Formatter } from 'rain-sdk';
-    import { onMount } from 'svelte';
+	import { signerAddress, signer } from 'svelte-ethers-store'
+  import { EmissionsERC20 } from 'rain-sdk';
     import { ethers } from 'ethers';
     import Item from './Item.svelte';
     import Label from './Label.svelte';
@@ -9,22 +8,21 @@
     import SectionBody from './SectionBody.svelte';
     import Section from './Section.svelte';
     import SectionHeading from './SectionHeading.svelte';
-    import { EmissionConractDetails } from '$src/constants';
-    import { getContractAddress } from 'ethers/lib/utils';
+    import { EmissionContracts } from '$src/constants';
 
   let walletBalance, decimals; 
   let energyBalance , energyContractDecimals
   const getContract = async () =>{
-    let emissionsContract = ethers.utils.isAddress(EmissionConractDetails.contractAddress || "") ? new EmissionsERC20(EmissionConractDetails.contractAddress, $signer): null;
+    let emissionsContract = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
     walletBalance =  await emissionsContract.balanceOf($signerAddress)
     decimals = await emissionsContract.decimals() 
 
-    let energyContract = ethers.utils.isAddress(EmissionConractDetails.energyContractAddress || "") ? new EmissionsERC20(EmissionConractDetails.energyContractAddress, $signer): null;
+    let energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
     energyBalance =  await energyContract.balanceOf($signerAddress)
     energyContractDecimals = await energyContract.decimals()
   }
 
-  $: if($signerAddress && EmissionConractDetails.contractAddress) {
+  $: if($signerAddress && EmissionContracts) {
       getContract()
     }
 </script>
