@@ -16,7 +16,7 @@
 
 <div class="flex w-full flex-col gap-y-2">
   {#if $$slots.label}
-    <div class="font-light text-gray-100">
+    <div class=" text-gray-500 text-sm font-medium">
       <slot name="label" />
     </div>
   {/if}
