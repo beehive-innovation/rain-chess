@@ -1,6 +1,10 @@
 import WalletConnect from "@walletconnect/web3-provider/dist/umd/index.min";
 import Fortmatic from "fortmatic";
 
+export const VerifyConractDetails = {
+  contractAddress: ""
+}
+
 // Example for Polygon/Matic:
 const customNetworkOptions = {
   rpcUrl: 'https://rpc-mumbai.maticvigil.com',
@@ -185,18 +189,18 @@ export const networks = [{
   },
   blockExplorer: 'https://goerli.etherscan.io'
 },
-// {
-//   label: " Kovan",
-//   config: {
-//     chainId: "0x2a",
-//     chainName: ' Kovan',
-//     rpcUrls: ['https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
-//     nativeCurrency: {
-//       name: ' Kovan',
-//       symbol: 'ETH',
-//       decimals: 18
-//     },
-//     blockExplorerUrls: ['https://kovan.etherscan.io']
-//   }
-// }
+  // {
+  //   label: " Kovan",
+  //   config: {
+  //     chainId: "0x2a",
+  //     chainName: ' Kovan',
+  //     rpcUrls: ['https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
+  //     nativeCurrency: {
+  //       name: ' Kovan',
+  //       symbol: 'ETH',
+  //       decimals: 18
+  //     },
+  //     blockExplorerUrls: ['https://kovan.etherscan.io']
+  //   }
+  // }
 ]

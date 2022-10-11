@@ -1,13 +1,10 @@
 <script lang="ts">
   import { signer, signerAddress } from "svelte-ethers-store";
   import Button from "$components/Button.svelte";
-  import FormPanel from "$components/FormPanel.svelte";
   import Input from "$components/Input.svelte";
   import { validateFields } from "../../utils";
   import { addressValidate, required } from "../../validation";
   import Parser from "$components/parser/Parser.svelte";
-  import OpDocs from "$components/parser/OpDocs.svelte";
-  import { OpMeta } from "$components/parser/opmeta";
   import Label from "$routes/toy-token/Label.svelte";
   import Info from "$routes/toy-token/Info.svelte";
   import Section from "$routes/toy-token/Section.svelte";
@@ -27,9 +24,7 @@
   let fields: any = {};
 
   let tweetURL = "";
-  let erc20symbol = "eTKN";
-  let initSupply = 0
-  let ownerAddress = "0xf6CF014a3e92f214a3332F0d379aD32bf0Fae929"
+  let tknUnits
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
 
@@ -60,6 +55,16 @@
       const simulator = new EmissionsERC20JSVM($parserVmStateConfig, {signer: $signer})
       simulatedResult = await simulator.run({context: [$signerAddress]})
     }
+  }
+
+  const getExpressions = () =>{
+    console.log("demo");
+    
+  }
+
+  const calculateRate = () =>{
+    console.log("demo");
+    
   }
 
   const handleClick = () =>{
@@ -120,19 +125,14 @@
               items={Options}
               bind:value={option}
               on:change={() => {
-                  document.getElementById("express").style.display = "grid";
-                  if(option.value == 1) document.getElementById("exp").style.display = "none";
+                  if(option.value != 2) document.getElementById("express").style.display = "grid";
+                  else document.getElementById("express").style.display = "none";
               }}
             >
               <span slot="label"> Select The Option: </span>
             </Select>
           </div>
 
-          
-          <!-- <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
-            <IconLibrary width={30} icon="tip" />
-            <div class="max-w-prose">Remember - this is totally unique to your copy of Toy Token and gets evaluated as part of the claim function.</div>
-          </div> -->
           <div id="express" style="display: none;">
           <div class="grid grid-cols-7 gap-4 items-stretch" >
             <div class="col-span-4 flex flex-col gap-y-4">
@@ -174,63 +174,39 @@
         <Select
               items={tknOptions}
               bind:value={tknOption}
+              on:change={() => {
+                   if(tknOption.value != 2) document.getElementById("exp").style.display = "grid";
+                  else document.getElementById("exp").style.display = "none";
+              }}
             >
-              <!-- on:change={() => {
-                  document.getElementById("express").style.display = "grid";
-                  if(option.value == 1) document.getElementById("exp").style.display = "none";
-              }} -->
               <span slot="label"> Select The Option: </span>
         </Select>
-         <!--<div id="exp" style="" class="grid grid-cols-2 gap-4">
-          <Input
-            type="text"
-            placeholder="Name"
-            bind:this={fields.erc20name}
-            bind:value={erc20name}
-            validator={required}
-          >
-            <span slot="label">Name</span>
-          </Input>
-          <Input
-            type="text"
-            placeholder="Symbol"
-            bind:this={fields.erc20symbol}
-            bind:value={erc20symbol}
-            validator={required}
-          >
-            <span slot="label">Symbol</span>
-          </Input>
-          <Input
-            type="address"
-            placeholder="Name"
-            bind:this={fields.ownerAddress}
-            bind:value={ownerAddress}
-            validator={addressValidate}
-          >
-            <span slot="label">Address to immediately mint token for</span>
-          </Input>
-          <Input
-            type="number"
-            bind:this={fields.initSupply}
-            bind:value={initSupply}
-            validator={required}
-          >
-            <span slot="label">Amount of the token to immediately mint</span>
-          </Input>
-        </div> -->
+        <div id="exp" style="display: none;">
+          <div class="grid grid-cols-2 gap-4">
+            <Input
+              type="text"
+              placeholder="number of tokens"
+              bind:this={fields.units}
+              bind:value={tknUnits}
+              validator={required}
+            >
+              <span slot="label">Number of tokens {tknOption?.value == 0 ? "want to Buy" : "want to stake"} </span>
+            </Input>
+          </div>
+          <div class="self-start flex flex-row items-center py-4 gap-x-2">
+            <Button shrink disabled={!$signer} on:click={handleClick}>Deploy EmissionsERC20</Button>
+            {#if !$signer}
+            <span class="text-gray-600">Connect your wallet to deploy</span>
+            {/if}
+          </div>
+        </div>
       </SectionBody>
     </Section>
 
-    <!-- <div class="self-start flex flex-row items-center gap-x-2">
-      <Button shrink disabled={!$signer} on:click={handleClick}>Deploy EmissionsERC20</Button>
-      {#if !$signer}
-      <span class="text-gray-600">Connect your wallet to deploy</span>
-      {/if}
-    </div> -->
+    
   </div>
 
   <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2">
-    <OpDocs {OpMeta} />
     <OtherTokens />
   </div>
 
