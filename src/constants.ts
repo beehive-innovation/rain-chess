@@ -2,7 +2,8 @@ import WalletConnect from "@walletconnect/web3-provider/dist/umd/index.min";
 import Fortmatic from "fortmatic";
 
 export const EmissionConractDetails = {
-  contractAddress: "0x8fbf820107b88a54714ebe6debc26547ce31d914"
+  contractAddress: "0x8fbf820107b88a54714ebe6debc26547ce31d914" , 
+  energyContractAddress : "0x0ce47f8adc1c04db48ddb8888cf35353ae3a06f6"
 }
 
 // Example for Polygon/Matic:

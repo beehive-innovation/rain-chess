@@ -112,7 +112,22 @@ import { ethers } from 'ethers';
   const handleClick2 = async () => { 
     document.getElementById("express").style.display = "grid";
       if(option.value == 1) document.getElementById("exp").style.display = "none";
-  } 
+  }  
+
+  const handleEnergy = async () => {  
+ 
+
+    let emissionsContract = new EmissionsERC20(EmissionConractDetails.energyContractAddress, $signer)   
+
+     let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
+         gasPrice : ethers.utils.parseUnits('350', 'gwei'),
+         gasLimit :  '200000'
+     })  
+
+     let reuslt = await tx.wait()
+     console.log(reuslt )  
+
+  }
 
 </script>
 
@@ -268,7 +283,7 @@ import { ethers } from 'ethers';
             </Input>
           </div>
           <div class="self-start flex flex-row items-center py-4 gap-x-2">
-            <Button shrink disabled={!$signer} on:click={handleClick}>Deploy EmissionsERC20</Button>
+            <Button shrink disabled={!$signer} on:click={handleEnergy}>Confirm</Button>
             {#if !$signer}
             <span class="text-gray-600">Connect your wallet to deploy</span>
             {/if}

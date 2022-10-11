@@ -12,11 +12,16 @@
     import { EmissionConractDetails } from '$src/constants';
     import { getContractAddress } from 'ethers/lib/utils';
 
-  let walletBalance, decimals;
+  let walletBalance, decimals; 
+  let energyBalance , energyContractDecimals
   const getContract = async () =>{
     let emissionsContract = ethers.utils.isAddress(EmissionConractDetails.contractAddress || "") ? new EmissionsERC20(EmissionConractDetails.contractAddress, $signer): null;
     walletBalance =  await emissionsContract.balanceOf($signerAddress)
-    decimals = await emissionsContract.decimals()
+    decimals = await emissionsContract.decimals() 
+
+    let energyContract = ethers.utils.isAddress(EmissionConractDetails.energyContractAddress || "") ? new EmissionsERC20(EmissionConractDetails.energyContractAddress, $signer): null;
+    energyBalance =  await energyContract.balanceOf($signerAddress)
+    energyContractDecimals = await energyContract.decimals()
   }
 
   $: if($signerAddress && EmissionConractDetails.contractAddress) {
@@ -60,7 +65,7 @@
             <Item>
               <Label>Wallet Balance :</Label>
               <Info>
-                {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Energy TKN
+                {energyBalance && energyContractDecimals ? ethers.utils.formatUnits(energyBalance, energyContractDecimals) : ""} Energy TKN
               </Info>
             </Item>
           </SectionBody>
