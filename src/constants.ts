@@ -2,11 +2,7 @@ import WalletConnect from "@walletconnect/web3-provider/dist/umd/index.min";
 import Fortmatic from "fortmatic";
 
 export const VerifyConractDetails = {
-<<<<<<< HEAD
-  contractAddress: ""
-=======
   contractAddress: "0x8fbf820107b88a54714ebe6debc26547ce31d914"
->>>>>>> a632c8e (UI updation)
 }
 
 // Example for Polygon/Matic:
