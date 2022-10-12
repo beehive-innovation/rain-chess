@@ -5,15 +5,15 @@
   import { validateFields } from "../../utils";
   import { addressValidate, required } from "../../validation";
   import Parser from "$components/parser/Parser.svelte";
-  import Label from "$routes/toy-token/Label.svelte";
-  import Info from "$routes/toy-token/Info.svelte";
-  import Section from "$routes/toy-token/Section.svelte";
-  import SectionHeading from "$routes/toy-token/SectionHeading.svelte";
-  import SectionBody from "$routes/toy-token/SectionBody.svelte";
-  import Item from "$routes/toy-token/Item.svelte";
+  import Label from "$routes/rain-chess/Label.svelte";
+  import Info from "$routes/rain-chess/Info.svelte";
+  import Section from "$routes/rain-chess/Section.svelte";
+  import SectionHeading from "$routes/rain-chess/SectionHeading.svelte";
+  import SectionBody from "$routes/rain-chess/SectionBody.svelte";
+  import Item from "$routes/rain-chess/Item.svelte";
   import { writable, type Writable } from "svelte/store";
   import IconLibrary from "$components/IconLibrary.svelte";
-  import OtherTokens from "$routes/toy-token/TokensInfo.svelte";
+  import StakeNBuy from "$routes/rain-chess/Stake&Buy.svelte";
   import { getContext } from "svelte";
   import { push } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
@@ -34,22 +34,22 @@
 
   const Options = [
     {value: 2, label: "Select UserType"},
-    { value: 0, label: "Register" },
+    { value: 0, label: "Verify Account" },
     { value: 1, label: "Verify Game" },
   ]
   let option: { value: number; label: string }
 
-  const tknOptions = [
-    {value: 2, label: "Select Token Type"},
-    { value: 0, label: "Buy Enery TKN" },
-    { value: 1, label: "Stake Chess TKN" },
-  ]
-  let tknOption: { value: number; label: string }
+  // const tknOptions = [
+  //   {value: 2, label: "Select Token Type"},
+  //   { value: 0, label: "Buy Enery TKN" },
+  //   { value: 1, label: "Stake Chess TKN" },
+  // ]
+  // let tknOption: { value: number; label: string }
 
   // let parserVmStateConfig: Writable<StateConfig> = writable(null)
   let newEmissionsERC20
   let simulatedResult 
-  let claimFlag
+  let deployPromise
 
   $: if ($parserVmStateConfig && $signer) simulate()
 
@@ -61,47 +61,30 @@
     }
   }
 
-  const handleClick = async () =>{ 
-   
-   if(!claimFlag){
+  const handleSubmit = async () =>{ 
      let id = tweetURL.split('/').pop() 
    
-     let verifyReq
-     if(option.value == 0){
-       verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
-         tweetId :  id
-       })  
+    //  let verifyReq
+    //  if(option.value == 0){
+    //    verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
+    //      tweetId :  id
+    //    })  
        
-     }else if(option.value == 1){
-       let address = await $signer.getAddress() 
+    //  }else if(option.value == 1){
+    //    let address = await $signer.getAddress() 
        
-       verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
-         tweetId :  id ,
-         address : address.toLowerCase()
-       })   
-     }  
-     console.log(verifyReq)
-     simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
-     tweetURL = `` 
-     claimFlag = !claimFlag
-
-   }else{
-     let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
-
-     let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
-         gasPrice : ethers.utils.parseUnits('350', 'gwei'),
-         gasLimit :  '200000'
-     })  
-
-     let reuslt = await tx.wait()
-     console.log(reuslt )  
-
-     claimFlag = !claimFlag
-   }
+    //    verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
+    //      tweetId :  id ,
+    //      address : address.toLowerCase()
+    //    })   
+    //  }  
+    //  console.log(verifyReq)
+    //  simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
+    //  tweetURL = `` 
 } 
 
-  const handleEnergy = async () => {  
-    let emissionsContract = new EmissionsERC20(EmissionContracts.energyContractAddress, $signer)   
+const handleClaim =async () => {
+  let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
 
      let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
          gasPrice : ethers.utils.parseUnits('350', 'gwei'),
@@ -111,13 +94,20 @@
      let reuslt = await tx.wait()
      console.log(reuslt )  
 
-  }
+    //  claimFlag = !claimFlag
+}
+
+const handleClick = async () => {
+    const { validationResult } = await validateFields(fields);
+    if (!validationResult) return;
+    deployPromise = handleSubmit();
+  };
 
 </script>
 
 <div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
-    <span class="text-3xl font-semibold">Rain Chess</span>
+    <span class="text-3xl font-semibold">liChess Player</span>
     <div class="mb-2 flex flex-col w-full space-y-4">
       <div class="grid grid-cols-12 items-center" >
         <div class="col-span-1 flex flex-col gap-y-4">
@@ -170,7 +160,7 @@
     </Section>
 
     <Section>
-      <SectionHeading>Expressions (1)</SectionHeading>
+      <SectionHeading>Verify (2)</SectionHeading>
       <SectionBody>
         <span class="text-xl font-semibold">Claimable amount expression</span>
           <div class="max-w-prose">Enter the tweet URL and check claimable</div>
@@ -227,7 +217,7 @@
             </div>
           </div>
           <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-              <Button shrink disabled={!$signer} on:click={handleClick}> {!claimFlag ? "Submit" : "Claim"} </Button>
+              <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
             {#if !$signer}
             <span class="text-gray-600">Connect your wallet to deploy</span>
             {/if}
@@ -237,8 +227,18 @@
     </Section>
 
     <Section>
-      <SectionHeading>Configuration (4)</SectionHeading>
+      <SectionHeading>Claim</SectionHeading>
       <SectionBody>
+        <span class="text-xl font-semibold">Claimable amount</span>
+          <div class="max-w-prose">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
+        <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
+          <Button shrink disabled={!$signer || !deployPromise} on:click={handleClaim}> Claim </Button>
+        {#if !$signer}
+        <span class="text-gray-600">Connect your wallet to deploy</span>
+        {/if}
+      </div>
+      </SectionBody>
+      <!-- <SectionBody>
         <Select
               items={tknOptions}
               bind:value={tknOption}
@@ -274,14 +274,14 @@
             {/if}
           </div>
         </div>
-      </SectionBody>
+      </SectionBody> -->
     </Section>
 
     
   </div>
 
   <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2">
-    <OtherTokens />
+    <StakeNBuy />
   </div>
 
 </div>

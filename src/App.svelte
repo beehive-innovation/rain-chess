@@ -3,7 +3,8 @@
   import Router from "svelte-spa-router";
   import Modal from "svelte-simple-modal";
 
-  import RainChess from "$routes/toy-token/RainChess.svelte";
+  import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
+  import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
 
   
   let routes = {};
@@ -11,7 +12,8 @@
   routes = {
     // Using named parameters, with last being optional
 
-    "/": RainChess,
+    "/": liChessPlayer,
+    "/designer": GameDesigner
 
     // Catch-all
     // This is optional, but if present it must be the last
