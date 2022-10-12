@@ -111,7 +111,7 @@ const handleClick = async () => {
     <div class="mb-2 flex flex-col w-full space-y-4">
       <div class="grid grid-cols-12 items-center" >
         <div class="col-span-1 flex flex-col gap-y-4">
-          <img src='../../../public/assets/twitter.png' width='32' height='32' alt='twitter' class='me-4' />
+          <img src="/assets/twitter.png" width='32' height='32' alt='twitter' class='me-4' />
         </div>
         <div class="col-span-11">
             <p>
@@ -122,7 +122,7 @@ const handleClick = async () => {
       </div>
       <div class="grid grid-cols-12 items-center" >
         <div class="col-span-1 flex flex-col gap-y-4">
-          <img src='../../../public/assets/lichess.svg' width='32' height='32' alt='twitter' class='me-4' />
+          <img src="/assets/lichess.svg" width='32' height='32' alt='twitter' class='me-4' />
         </div>
         <div class="col-span-11">
             <p>
@@ -139,7 +139,7 @@ const handleClick = async () => {
           <Label>Name</Label> 
           <Info> 
             <span class="flex flex-row space-x-4">
-              <img src="../../../public/assets/knight2.png" class="h-6 w-6" /> 
+              <img src="/assets/knight2.png" class="h-6 w-6" /> 
               <span>Chess TKN</span>
             </span>
           </Info>
