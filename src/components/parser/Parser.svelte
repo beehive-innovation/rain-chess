@@ -8,7 +8,7 @@ import { tick } from 'svelte';
 
 export let vmStateConfig: Writable<StateConfig>
 
-const placeholderText = "Write your expression"
+const placeholderText = "EAGER_IF(EQUAL_TO(ITIERV2_REPORT(0xde61d65dbabc7274f18c747b6243b03e11933fec, CONTEXT[0]), MaxUint256), 0x00, SUB(MIN(MUL(SUB(BLOCK_TIMESTAMP, 0x633af02e), 0x0139b745a4261dac25ed), DIV(0x033b2e3c9fd0803ce8000000, 0x02)), MIN(MUL(SATURATING_SUB(ITIERV2_REPORT_TIME_FOR_TIER(THIS_ADDRESS, CONTEXT[0], 0x01), 0x633af02e), 0x0139b745a4261dac25ed), DIV(0x033b2e3c9fd0803ce8000000, 0x02))))"
 
 let autocompleteSelection: Selection
 
@@ -184,7 +184,7 @@ const inputAction = (node: HTMLDivElement) => {
 }
 </script>
 
-<div class="rounded-lg border-gray-400 bg-gray-200 p-4 w-full font-mono h-full" use:inputAction contenteditable="true" spellcheck="false">
+<div class="rounded-lg border-gray-400 bg-gray-200 p-4  w-full font-mono h-full" use:inputAction contenteditable="false" spellcheck="false">
     {placeholderText}
 </div>
 

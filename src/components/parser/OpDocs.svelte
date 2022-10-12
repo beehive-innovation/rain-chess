@@ -38,7 +38,7 @@ onMount(()=>{
     <div>
         <input bind:value={searchStr} class="bg-transparent p-2 border-y border-gray-400 w-full" type="text" placeholder="Search"/>
     </div>
-    <div class="flex flex-col text-sm overflow-scroll h-full cursor-pointer">
+    <div class="flex flex-col text-sm overflow-scroll h-full cursor-pointer break-words">
         {#each categories as category}
             <span class="bg-gray-300 p-2">
                 {category}
