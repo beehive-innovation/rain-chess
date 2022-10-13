@@ -13,20 +13,26 @@
     import Select from '$components/Select.svelte';
     import Input from '$components/Input.svelte';
     import Button from '$components/Button.svelte';
+    import { formatUnits } from 'ethers/lib/utils';
 
     let fields: any = {};
     let tknUnits
 
-  let walletBalance, decimals; 
-  let energyBalance , energyContractDecimals
+  let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
+  let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;
   const getContract = async () =>{
-    let emissionsContract = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
-    walletBalance =  await emissionsContract.balanceOf($signerAddress)
-    decimals = await emissionsContract.decimals() 
+    chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
+    console.log("chesssContract", chesssContract);
+    chessTKNName = await chesssContract.name()
+    chessTKNClaimBal = await chesssContract.calculateClaim($signerAddress)
+    chessTKNSymbol = await chesssContract.symbol()
+    chessTKNDecimals = await chesssContract.decimals() 
 
-    let energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
-    energyBalance =  await energyContract.balanceOf($signerAddress)
-    energyContractDecimals = await energyContract.decimals()
+    energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
+    energyTKNClaimBal =  await energyContract.calculateClaim($signerAddress)
+    energyTKNName = await energyContract.name()
+    energyTKNSymbol = await energyContract.symbol()
+    energyTKNDecimals = await energyContract.decimals()
   }
 
   $: if($signerAddress && EmissionContracts) {
@@ -53,10 +59,90 @@
 
   }
 
+
 </script>
 
-<div class="w-full">
-  <div class="flex flex-col gap-y-6 p-2">
+<div class="w-full h-full">
+  <div class="flex flex-col gap-y-6 p-2 overflow-scroll h-full">
+    <!-- <div class="border-t border-gray-400 h-full">
+      <div class="border-b border-gray-400 p-2 w-full font-semibold">Other liChess Expressions</div>
+      <div class="flex flex-col p-2 overflow-scroll h-full"> -->
+    <Section>
+      <SectionHeading>Chess Token Details</SectionHeading>
+      {#if $signerAddress}
+        <SectionBody>
+          <Item>
+            <Label>Contract Name & Address :</Label>
+            <Info>
+              {#if chessTKNName && chesssContract}
+                {chessTKNName} ({chesssContract?.address})
+              {/if}
+            </Info>
+          </Item>
+          <Item>
+            <Label>Claimable Balance :</Label>
+            <Info>
+              {#if chessTKNClaimBal && chessTKNDecimals && chessTKNSymbol}
+                
+              {formatUnits(chessTKNClaimBal, chessTKNDecimals)}
+              {chessTKNSymbol}
+              {/if}
+              <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
+            </Info>
+          </Item>
+          <Item>
+            <Button
+              small ={true}
+              shrink
+              >Claim
+              <!-- on:click={() => {
+                  claimPromise = claim(token.address);
+              }} -->
+            </Button>
+          </Item>
+        </SectionBody>
+      {:else}
+        <span class="p-4">Please Connect your wallet</span>
+      {/if}
+    </Section>
+    <Section>
+      <SectionHeading>Energy Token Details</SectionHeading>
+      {#if $signerAddress}
+        <SectionBody>
+          <Item>
+            <Label>Contract Name & Address :</Label>
+            <Info>
+              {#if energyTKNName && energyContract}
+                {energyTKNName} ({energyContract?.address})
+              {/if}
+            </Info>
+          </Item>
+          <Item>
+            <Label>Claimable Balance :</Label>
+            <Info>
+              {#if energyTKNDecimals && energyTKNClaimBal && energyTKNSymbol}
+                
+              {formatUnits(energyTKNClaimBal, energyTKNDecimals)}
+              {energyTKNSymbol}
+              {/if}
+              <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
+            </Info>
+          </Item>
+          <Item>
+            <Button
+              small ={true}
+              shrink
+              >Claim
+              <!-- on:click={() => {
+                  claimPromise = claim(token.address);
+              }} -->
+            </Button>
+          </Item>
+        </SectionBody>
+      {:else}
+        <span class="p-4">Please Connect your wallet</span>
+      {/if}
+    </Section>
     <Section>
       <SectionHeading>Buy Tokens (2)</SectionHeading>
       <SectionBody>
@@ -112,6 +198,7 @@
         </Select> -->
         <div>
           <div class="grid grid-cols-1 gap-4 pb-4">
+            <span>Number of ches tkn staked</span>
             <!-- <Item>
               <Label>You can {tknOption?.value == 0 ? "Buy token" : "Stake Token"} : </Label>
               <Info>{tknOption?.value == 0 ? "10 ETKN/0.01 Matic" : "10 ETKN/0.01 Chess TKN"}</Info>
@@ -137,28 +224,29 @@
         </div>
       </SectionBody>
     </Section>
+  
       <!-- <Section>
-          <SectionHeading>Chess Token Details</SectionHeading>
-          {#if $signerAddress}
-            <SectionBody>
-              <Item>
-                <Label>Wallet Address :</Label>
-                <Info>
-                  {$signerAddress}
-                </Info>
-              </Item>
-              <Item>
-                <Label>Wallet Balance :</Label>
-                <Info>
-                  {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN
-                </Info>
-              </Item>
-            </SectionBody>
-          {:else}
-            <span class="p-4">Please Connect your wallet</span>
-          {/if}
-      </Section>
-      <Section>
+      <SectionHeading>Chess Token Details</SectionHeading>
+      {#if $signerAddress}
+        <SectionBody>
+          <Item>
+            <Label>Wallet Address :</Label>
+            <Info>
+              {$signerAddress}
+            </Info>
+          </Item>
+          <Item>
+            <Label>Wallet Balance :</Label>
+            <Info>
+              {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN
+            </Info>
+          </Item>
+        </SectionBody>
+      {:else}
+        <span class="p-4">Please Connect your wallet</span>
+      {/if}
+  </Section>
+    <Section>
         <SectionHeading>Enery Token Details</SectionHeading>
         {#if $signerAddress}
           <SectionBody>

@@ -108,53 +108,12 @@ const handleClick = async () => {
 <div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
     <span class="text-3xl font-semibold">liChess Player</span>
-    <div class="mb-2 flex flex-col w-full space-y-4">
-      <div class="grid grid-cols-12 items-center" >
-        <div class="col-span-1 flex flex-col gap-y-4">
-          <img src="/assets/twitter.png" width='32' height='32' alt='twitter' class='me-4' />
-        </div>
-        <div class="col-span-11">
-            <p>
-              Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
-              Copy-paste the tweets URL into the above input box and fire away!
-            </p>
-        </div>
-      </div>
-      <div class="grid grid-cols-12 items-center" >
-        <div class="col-span-1 flex flex-col gap-y-4">
-          <img src="/assets/lichess.svg" width='32' height='32' alt='twitter' class='me-4' />
-        </div>
-        <div class="col-span-11">
-            <p>
-              Verify via Twitter, make a <a target='_blank' href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).<br />
-              Copy-paste the tweets URL into the above input box and fire away!
-            </p>
-        </div>
-      </div>
-    </div>
+    
     <Section>
-      <SectionHeading>Contract</SectionHeading>
+      <SectionHeading>Game</SectionHeading>
       <SectionBody>
         <Item>
-          <Label>Name</Label> 
-          <Info> 
-            <span class="flex flex-row space-x-4">
-              <img src="/assets/knight2.png" class="h-6 w-6" /> 
-              <span>Chess TKN</span>
-            </span>
-          </Info>
-        </Item>
-        <Item>
-          <Label>Source</Label>
-          <Info>Rain</Info>
-        </Item>
-        <Item>
-          <Label>Token</Label>
-          <Info>ERC20</Info>
-        </Item>
-        <Item>
-          <Label>Contract details</Label>
-          <Info>Mint a new ERC20 which releases new supply whenever a valid claim is made. We script the claim step, and each wallet trying to claim needs to be meet the criteria to mint their ERC20s. In this way claiming criteria can implicitly set a total supply cap, wallet supply cap and more. Can be used for game credits, project tokens, rewards.</Info>
+          <span class="text-xl font-medium max-w-prose">Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a>, register account and play a game </span> 
         </Item>
       </SectionBody>
     </Section>
@@ -162,6 +121,29 @@ const handleClick = async () => {
     <Section>
       <SectionHeading>Verify (2)</SectionHeading>
       <SectionBody>
+        <div class="mb-2 flex flex-col w-full space-y-4">
+          <div class="grid grid-cols-12 items-center" >
+            <div class="col-span-1 grid justify-center gap-y-4">
+              <img src="/assets/twitter.png" width='32' height='32' alt='twitter' class='me-4' />
+            </div>
+            <div class="col-span-11">
+                <p>
+                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).                  Copy-paste the tweets URL into the above input box and fire away!
+                </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-12 items-center" >
+            <div class="col-span-1 grid justify-center gap-y-4">
+              <img src="/assets/lichess.svg" width='32' height='32' alt='twitter' class='me-4' />
+            </div>
+            <div class="col-span-11">
+                <p>
+                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).
+                  Copy-paste the tweets URL into the above input box and fire away!
+                </p>
+            </div>
+          </div>
+        </div>
         <span class="text-xl font-semibold">Claimable amount expression</span>
           <div class="max-w-prose">Enter the tweet URL and check claimable</div>
           <div class="grid grid-cols-2 gap-4">
@@ -280,7 +262,7 @@ const handleClick = async () => {
     
   </div>
 
-  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2">
+  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 ">
     <StakeNBuy />
   </div>
 

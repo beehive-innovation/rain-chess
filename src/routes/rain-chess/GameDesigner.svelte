@@ -110,36 +110,63 @@
     <span class="text-3xl font-semibold">liChess Game Designer</span>
 
     <div class="mb-2 flex flex-col w-full">
-      <Info>Create a token and your friends and can come and mint it. You set the rules of who can mint and how much they can mint. Here are some games you might want to play:</Info>
+      <Info>Design the economy for Rain Chess and reward people for playing chess.</Info>
       <div>example expressions...</div>
     </div>
     <Section>
       <SectionHeading>Contract</SectionHeading>
-      <SectionBody>
-        <Item>
+      <SectionBody direction="flex-row">
+        <Item width="w-1/3">
           <Label>Name</Label>
           <Info>Emissions</Info>
         </Item>
-        <Item>
+        <Item width="w-1/3">
           <Label>Source</Label>
           <Info>Rain</Info>
         </Item>
-        <Item>
+        <Item width="w-1/3">
           <Label>Token</Label>
           <Info>ERC20</Info>
-        </Item>
-        <Item>
-          <Label>Contract details</Label>
-          <Info>Mint a new ERC20 which releases new supply whenever a valid claim is made. We script the claim step, and each wallet trying to claim needs to be meet the criteria to mint their ERC20s. In this way claiming criteria can implicitly set a total supply cap, wallet supply cap and more. Can be used for game credits, project tokens, rewards.</Info>
         </Item>
       </SectionBody>
     </Section>
 
     <Section>
-      <SectionHeading>Expressions (1)</SectionHeading>
+      <SectionHeading>Resources</SectionHeading>
+      <SectionBody>
+        <span class="text-xl font-medium max-w-prose">Use these resources in your game. They are things like memberships, community bootstrapping, verifications, tiers, staking.</span>
+          <Item>
+            <Label>Use following Resources:</Label>
+            <div>
+              <span><a target='_blank' class="text-blue-400 underline" href="https://rain-toolkit-vm2.on.fleek.co/#/stake/deploy">Stake</a> : Deploy a Staking contract with ability to stake the reserve token to receive stake tokens (shares).</span>
+            </div>
+            <div>
+              <span><a target='_blank' class="text-blue-400 underline" href="https://rain-toolkit-vm2.on.fleek.co/#/erc20balancetier/deploy">Tier</a> : Create Tier statuses corresponding to holding at least a certain amount of an ERC20.</span>
+            </div>
+            <div>
+              <span><a target='_blank' class="text-blue-400 underline" href="https://rain-toolkit-vm2.on.fleek.co/#/combinetier/deploy">CombineTier</a> : Choose two Tier contracts and combine them to produce a new Tier contract.</span>
+            </div>
+            <div>
+              <span><a target='_blank' class="text-blue-400 underline" href="https://rain-toolkit-vm2.on.fleek.co/#/verify/deploy">Verify</a> : A Verify contract stores the status of addresses (Approved, Banned, Removed).</span>
+            </div>
+            <div>
+              <span><a target='_blank' class="text-blue-400 underline" href="https://rain-toolkit-vm2.on.fleek.co/#/sale/deploy">Sale</a> : Create a new Sale.</span>
+            </div>
+          </Item>
+      </SectionBody>
+    </Section>
+
+    <Section>
+      <SectionHeading>Expressions</SectionHeading>
       <SectionBody>
         <span class="text-xl font-semibold">Claimable amount expression</span>
           <div class="max-w-prose">This expression will be evaluated every time the claim function is called to determine how much of this ERC20 the wallet can mint (if anything).</div>
+          <div class="max-w-prose font-medium">Review <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz/blog/tags/game">https://docs.rainprotocol.xyz/blog/tags/game</a>  to guides to create game currencies.</div>
+          <div class="max-w-prose font-medium">You can create a 
+            <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz/blog/tags/game">game currency</a>,
+            <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz/blog/tags/game">energy currency</a>, 
+            <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz/blog/tags/game">reward currency</a>, 
+            <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz/blog/tags/game">event currency</a>. List of game currencies to browse is available at <a target='_blank' class="text-blue-400 underline" href="https://docs.rainprotocol.xyz">https://docs.rainprotocol.xyz</a></div>
           
           <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
             <IconLibrary width={30} icon="tip" />
@@ -176,7 +203,7 @@
     <Section>
       <SectionHeading>Configuration (4)</SectionHeading>
       <SectionBody>
-        <Select
+        <!-- <Select
               items={Options}
               bind:value={option}
               on:change={() => {
@@ -185,8 +212,8 @@
               }}
             >
               <span slot="label"> Select The Option: </span>
-            </Select>
-        <div id="express" style="display: none;" class="grid grid-cols-2 gap-4">
+            </Select> -->
+        <div class="grid grid-cols-2 gap-4">
           <Input
             type="text"
             placeholder="Name"
@@ -227,14 +254,14 @@
     </Section>
 
     <div class="self-start flex flex-row items-center gap-x-2">
-      <Button shrink disabled={!$signer} on:click={handleClick}>Deploy EmissionsERC20</Button>
+      <Button shrink disabled={!$signer} on:click={handleClick}>Create</Button>
       {#if !$signer}
       <span class="text-gray-600">Connect your wallet to deploy</span>
       {/if}
     </div>
   </div>
 
-  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2">
+  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2 break-all">
     <OpDocs {OpMeta} />
     <OtherTokens />
   </div>
