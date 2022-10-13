@@ -184,7 +184,7 @@ const inputAction = (node: HTMLDivElement) => {
 }
 </script>
 
-<div class="rounded-lg border-gray-400 bg-gray-200 p-4  w-full font-mono h-full" use:inputAction contenteditable="false" spellcheck="false">
+<div class="rounded-lg border-gray-400 bg-gray-200 p-4  w-full font-mono h-full" use:inputAction contenteditable="true" spellcheck="false">
     {placeholderText}
 </div>
 
