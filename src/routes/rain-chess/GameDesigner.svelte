@@ -30,6 +30,7 @@
     import { getContext } from "svelte";
     import { push } from "svelte-spa-router";
     import Select from "$components/Select.svelte";
+    import RevelantContract from "./RevelantContract.svelte";
 
   const { open } = getContext('simple-modal')
 
@@ -261,8 +262,9 @@
     </div>
   </div>
 
-  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2 break-all">
+  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-3 break-all">
     <OpDocs {OpMeta} />
+    <RevelantContract />
     <OtherTokens />
   </div>
 
