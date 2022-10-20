@@ -77,7 +77,26 @@ onMount(()=>{
                 {/each}
             </div>
         {/each}
-    </div>
+    </div>  
+    <span class="text-lg p-2 font-semibold">Avalibale Resources</span>
+    <div class="flex flex-col text-sm overflow-scroll h-full cursor-pointer break-words"> 
+        <div class="flex flex-col">
+           
+            <div 
+               
+                class="flex flex-col p-2 hover:bg-gray-200"
+                
+                >
+                <span class="font-mono">
+                    Test Contracts 
+                </span>
+                
+    
+            </div>
+            
+        </div>
+    </div> 
+   
 </div>
 
 <style lang="postcss">

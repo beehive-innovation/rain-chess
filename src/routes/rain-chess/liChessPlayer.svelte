@@ -15,19 +15,69 @@
   import IconLibrary from "$components/IconLibrary.svelte";
   import StakeNBuy from "$routes/rain-chess/Stake&Buy.svelte";
   import { getContext } from "svelte";
-  import { push } from "svelte-spa-router";
+  import { params, push } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
   import {EmissionsERC20} from "rain-sdk" 
   import { ethers } from 'ethers';  
   import axios from 'axios'
-  import { EmissionContracts } from "$src/constants";
-  const { open } = getContext('simple-modal')
+  import {auth } from '$src/stores'
+  import { location, querystring } from 'svelte-spa-router'
+  import { EmissionContracts } from "$src/constants"; 
+  import { Verify } from "rain-sdk" 
+
+
+  import  { Auth } from "$src/test";
+  const { open } = getContext('simple-modal') 
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  console.log("Has data ? = ", urlParams.has('code'));
+  console.log("\nWOrld");   
+  
+  function str2ab(str) {
+  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+  var bufView = new Uint8Array(buf);
+  for (var i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return bufView;
+}
+
+  $: if(urlParams.has('code')) { 
+    const data =async () => {
+      console.log("init called ") 
+     await $auth.init() 
+     console.log($auth.me,"hii") 
+     if($auth.me && $signer){
+
+       let verifyContract = new Verify('0xb8c01dee6a0f920d51ea137d4908f65b13c41bc1' , $signer)  
+       
+       let encoder = new TextEncoder()
+  
+        let verifySubmit = await verifyContract.approve([{
+          account : $signerAddress , data : str2ab($auth.me.id)
+        }])  
+      console.log(verifySubmit)
+     }  
+
+    } 
+
+    
+    data()
+    
+
+   
+
+  } 
+
+  
+
 
   let fields: any = {};
 
   let tweetURL = "";
   let tknUnits
+  let getPromise
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
 
@@ -61,9 +111,26 @@
     }
   }
 
-  const handleSubmit = async () =>{ 
-     let id = tweetURL.split('/').pop() 
-   
+  const handleSubmit = async () =>{  
+
+     let id = tweetURL.split('/').pop()  
+
+     let gameId = `vpNeHkst`   
+
+    let contractAgruments : GameStruct = {
+      timestamp : 1665036973200 , 
+      white : '0x973EbeF3889daACBb9bB7f97AbfD4f6e20D26440' ,
+      black : '0x0000000000000000000000000000000000000000' ,
+      whiteResult : 0 , 
+      blackResult : 1 ,
+      whiteElo : 1500 ,
+      BlackElo : 1520
+   }
+
+     // , WhiteRatingDiff , BlackRatingDiff added later 
+     // arr = [ timestamp , white , black , whiteResult , blackResult , whiteElo , BlackElo  ]  
+     // sample values = (uint256 of )[ 1665036973200 , 0x973EbeF3889daACBb9bB7f97AbfD4f6e20D26440 , 0x0000000000000000000000000000000000000000 , 0 , 1 , 1500 , 1520  ]
+
     //  let verifyReq
     //  if(option.value == 0){
     //    verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
@@ -97,15 +164,27 @@ const handleClaim =async () => {
     //  claimFlag = !claimFlag
 }
 
-const handleClick = async () => {
+const handleClick = async () => { 
+
     const { validationResult } = await validateFields(fields);
     if (!validationResult) return;
     deployPromise = handleSubmit();
-  };
+  }; 
+
+  const loginWithLichess = async () => { 
+
+    console.log("auth", $auth);
+    
+      let data = await $auth.login()   
+      console.log("data", data);
+      
+};
+console.log("data", params);
+
 
 </script>
 
-<div class="flex gap-x-3 relative">
+<!-- <div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
     <span class="text-3xl font-semibold">liChess Player</span>
     
@@ -256,7 +335,7 @@ const handleClick = async () => {
             {/if}
           </div>
         </div>
-      </SectionBody> -->
+      </SectionBody> 
     </Section>
 
     
@@ -264,6 +343,16 @@ const handleClick = async () => {
 
   <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 ">
     <StakeNBuy />
-  </div>
+  </div> 
 
+</div>  -->
+
+<div>
+  <button on:click={loginWithLichess}>Login With LiChess </button>
+  <!-- <div>
+    current page location:   {$location}
+   </div>
+   <div>current page query:   {$querystring}</div>
+   <div>current page param:   {params}</div> -->
 </div>
+

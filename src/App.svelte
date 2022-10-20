@@ -5,22 +5,25 @@
 
   import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
+  import LoginHandler from "$routes/rain-chess/loginHandler.svelte";
+  // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
 
   
   let routes = {};
 
   routes = {
     // Using named parameters, with last being optional
+    "/" : liChessPlayer,
+    "/code": LoginHandler,
+    "/designer": GameDesigner, 
 
-    "/": liChessPlayer,
-    "/designer": GameDesigner
 
     // Catch-all
     // This is optional, but if present it must be the last
     // '*': NotFound,
   };
 </script>
-
+  
 <Modal
   unstyled={true}
   closeButton={false}

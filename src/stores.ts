@@ -1,8 +1,11 @@
 import { createClient } from "@urql/svelte";
 import { AddressBook } from "rain-sdk";
 import { derived, writable } from "svelte/store";
-import { networks } from "./constants";
+import { networks } from "./constants"; 
+import {Auth} from "$src/test"
 
+
+export let auth = writable(new Auth())
 
 export const selectedNetwork = writable(networks[1]);
 export const client = derived(
