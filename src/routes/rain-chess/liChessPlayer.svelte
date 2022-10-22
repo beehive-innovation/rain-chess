@@ -76,7 +76,7 @@
   let fields: any = {};
 
   let tweetURL = "";
-  let tknUnits
+  let tknUnits, gameId = ""
   let getPromise
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
@@ -184,7 +184,7 @@ console.log("data", params);
 
 </script>
 
-<!-- <div class="flex gap-x-3 relative">
+<div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
     <span class="text-3xl font-semibold">liChess Player</span>
     
@@ -292,8 +292,18 @@ console.log("data", params);
       <SectionBody>
         <span class="text-xl font-semibold">Claimable amount</span>
           <div class="max-w-prose">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
+          <Input
+              type="text"
+             
+              placeholder="Enter game id : XpWCxa7e"
+              bind:this={fields.gameId}
+              bind:value={gameId}
+              validator={required}
+            >
+              <span slot="label">Name</span>
+            </Input>
         <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-          <Button shrink disabled={!$signer || !deployPromise} on:click={handleClaim}> Claim </Button>
+          <Button shrink disabled={!$signer || !deployPromise} on:click={handleClaim}> Claim Reward</Button>
         {#if !$signer}
         <span class="text-gray-600">Connect your wallet to deploy</span>
         {/if}
@@ -335,7 +345,7 @@ console.log("data", params);
             {/if}
           </div>
         </div>
-      </SectionBody> 
+      </SectionBody> -->
     </Section>
 
     
@@ -345,14 +355,5 @@ console.log("data", params);
     <StakeNBuy />
   </div> 
 
-</div>  -->
-
-<div>
-  <button on:click={loginWithLichess}>Login With LiChess </button>
-  <!-- <div>
-    current page location:   {$location}
-   </div>
-   <div>current page query:   {$querystring}</div>
-   <div>current page param:   {params}</div> -->
-</div>
+</div> 
 

@@ -1,5 +1,14 @@
 <script>
   import WalletConnect from "../components/wallet-connect/WalletConnect.svelte";
+  import {auth } from '$src/stores'
+    import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+
+  $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
+
+  $ : if($auth){
+  console.log("test", $auth.me);
+  
+}
 
 </script>
 
@@ -11,7 +20,13 @@
     <span class="text-xl font-light text-gray-50">Rain Protocol</span>
   </div>
   <div class="flex flex-row items-center gap-x-4">
-    <WalletConnect />
+    
+      {#if oAuth}
+        <WalletConnect />
+      {:else}
+        <LiChessLogin />
+      {/if}
+
     <span>
       <a
         href="https://github.com/beehive-innovation/rain-toolkit-gui"
