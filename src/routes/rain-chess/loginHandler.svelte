@@ -18,7 +18,7 @@ import { signer, signerAddress } from "svelte-ethers-store";
   import IconLibrary from "$components/IconLibrary.svelte";
   import StakeNBuy from "$routes/rain-chess/Stake&Buy.svelte";
   import { getContext } from "svelte";
-  import { params, push } from "svelte-spa-router";
+  import { params, push, pop, replace } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
 //   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
   import {EmissionsERC20} from "rain-sdk" 
@@ -62,17 +62,14 @@ import { signer, signerAddress } from "svelte-ethers-store";
           account : $signerAddress , data : str2ab($auth.me.id)
         }])  
       console.log(verifySubmit)
-     }  
-
+     }
+    //  pop()
+    console.log("urlParams", window.location);  
+     replace('/player')
     } 
-
-    
     data()
-    
-
-   
-
   } 
+  $ : console.log("urlParams", window.location);
 
   const loginWithLichess = async () => { 
 
@@ -82,30 +79,6 @@ console.log("auth", $auth);
   console.log("data", data);
   
 };
-
-
-  
-  
-
-
-
-const handleClaim =async () => {
-  let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
-
-     let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
-         gasPrice : ethers.utils.parseUnits('350', 'gwei'),
-         gasLimit :  '200000'
-     })  
-
-     let reuslt = await tx.wait()
-     console.log(reuslt )  
-
-    //  claimFlag = !claimFlag
-}
-
-
-console.log("data", params);
-
 
 </script>
 
