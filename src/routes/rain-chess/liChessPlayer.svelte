@@ -15,19 +15,40 @@
   import IconLibrary from "$components/IconLibrary.svelte";
   import StakeNBuy from "$routes/rain-chess/Stake&Buy.svelte";
   import { getContext } from "svelte";
-  import { push } from "svelte-spa-router";
+  import { params, push } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
   import {EmissionsERC20} from "rain-sdk" 
   import { ethers } from 'ethers';  
   import axios from 'axios'
-  import { EmissionContracts } from "$src/constants";
-  const { open } = getContext('simple-modal')
+  import {auth } from '$src/stores'
+  import { location, querystring } from 'svelte-spa-router'
+  import { EmissionContracts } from "$src/constants"; 
+  import { Verify } from "rain-sdk" 
+
+  import ContractsConfigs from "../../../mumbai.json"
+
+  import  { Auth } from "$src/test";
+  const { open } = getContext('simple-modal') 
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  console.log("Has data ? = ", urlParams.has('code'));
+  console.log("\nWOrld");   
+  
+  function str2ab(str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint8Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+      bufView[i] = str.charCodeAt(i);
+    }
+    return bufView;
+  }
 
   let fields: any = {};
 
-  let tweetURL = "";
-  let tknUnits
+  let gameURL = "";
+  let tknUnits, gameId = ""
+  let getPromise
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
 
@@ -39,14 +60,6 @@
   ]
   let option: { value: number; label: string }
 
-  // const tknOptions = [
-  //   {value: 2, label: "Select Token Type"},
-  //   { value: 0, label: "Buy Enery TKN" },
-  //   { value: 1, label: "Stake Chess TKN" },
-  // ]
-  // let tknOption: { value: number; label: string }
-
-  // let parserVmStateConfig: Writable<StateConfig> = writable(null)
   let newEmissionsERC20
   let simulatedResult 
   let deployPromise
@@ -59,49 +72,63 @@
       const simulator = new EmissionsERC20JSVM($parserVmStateConfig, {signer: $signer})
       simulatedResult = await simulator.run({context: [$signerAddress]})
     }
+  }   
+
+  const handleOptionSubmit = async () => { 
+    console.log("In handle Submit : " , gameURL) 
+    if(option.value != 2) document.getElementById("express").style.display = "grid";
+    else document.getElementById("express").style.display = "none";  
+
+    let claimResult = option.value == 1 ? await axios.post(`http://46.101.7.19:5001/api/v2/computeGame` , {gameId :gameURL }) : undefined
+    console.log(claimResult?.data)
+
+    simulatedResult = claimResult != undefined ? `
+      GM Tokens Won : ${claimResult?.data?.data?.GM} ,
+      IMPRV Tokens Won : ${claimResult?.data?.data?.IMPRV} ,
+      XP Tokens Won : ${claimResult?.data?.data?.XP} ,
+      Win Tokens Won : ${claimResult?.data?.data?.WIN} ,
+    ` : "Please select Verify Game"
   }
 
-  const handleSubmit = async () =>{ 
-     let id = tweetURL.split('/').pop() 
-   
-    //  let verifyReq
-    //  if(option.value == 0){
-    //    verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
-    //      tweetId :  id
-    //    })  
-       
-    //  }else if(option.value == 1){
-    //    let address = await $signer.getAddress() 
-       
-    //    verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
-    //      tweetId :  id ,
-    //      address : address.toLowerCase()
-    //    })   
-    //  }  
-    //  console.log(verifyReq)
-    //  simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
-    //  tweetURL = `` 
-} 
+  const claimFlowReward = async () => {  
 
-const handleClaim =async () => {
-  let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
+      let contractAddress = ContractsConfigs.liChess 
+      let abi =[{"inputs":[{"internalType":"address","name":"interpreter_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"address","name":"claimant_","type":"address"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"RewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"},{"internalType":"bytes","name":"data_","type":"bytes"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContext","type":"tuple[]"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"gamesClaimed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"}],"name":"generateStack","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"}]
+      let lichessContract = new ethers.Contract(contractAddress ,abi ,$signer)  
 
-     let tx = await emissionsContract.claim( $signerAddress ,ethers.constants.AddressZero , {
-         gasPrice : ethers.utils.parseUnits('350', 'gwei'),
-         gasLimit :  '200000'
-     })  
+      let gameData = await axios.post('http://46.101.7.19:5001/api/v2/processGame' , {gameId : gameURL , winnerAddress : $signerAddress}) 
+      
+      console.log("gameURL  :" , ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameURL))).toString())
 
-     let reuslt = await tx.wait()
-     console.log(reuslt )  
+      const contextLiChess = {
+        winner: $signerAddress, // winner 
+        experiencePoints: 10,
+        isImproved: true,
+        isBeatenGM: true,
+        flow_ENERGY: ContractsConfigs.flow_ENERGY,
+        id_ENERGY: ContractsConfigs.flowStates_ENERGY.hex,
+        flow_WIN: ContractsConfigs.flow_WIN ,
+        id_WIN: ContractsConfigs.flowStates_WIN.hex,
+        flow_XP: ContractsConfigs.flow_XP ,
+        id_XP: ContractsConfigs.flowStates_XP.hex,
+        flow_GM: ContractsConfigs.flow_GM ,
+        id_GM: ContractsConfigs.flowStates_GM.hex,
+        flow_IMPROVE: ContractsConfigs.flow_IMPROVE ,
+        id_IMPROVE: ContractsConfigs.flowStates_IMPROVE.hex ,
+        gameId: ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameURL))).toString()
+      };  
+      
+      let tx = await lichessContract.claimReward(contextLiChess, "0x00", [gameData.data.data]) 
+      let res =await  tx.wait() 
+      console.log(res)
+  }
 
-    //  claimFlag = !claimFlag
-}
+  const handleClick = async () => { 
 
-const handleClick = async () => {
     const { validationResult } = await validateFields(fields);
     if (!validationResult) return;
-    deployPromise = handleSubmit();
-  };
+    deployPromise = claimFlowReward();
+  }; 
 
 </script>
 
@@ -121,14 +148,15 @@ const handleClick = async () => {
     <Section>
       <SectionHeading>Verify (2)</SectionHeading>
       <SectionBody>
-        <div class="mb-2 flex flex-col w-full space-y-4">
+        <div class="mb-2 flex flex-col w-full space-y-4"> 
+
           <div class="grid grid-cols-12 items-center" >
             <div class="col-span-1 grid justify-center gap-y-4">
-              <img src="/assets/twitter.png" width='32' height='32' alt='twitter' class='me-4' />
+              <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
             </div>
             <div class="col-span-11">
                 <p>
-                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).                  Copy-paste the tweets URL into the above input box and fire away!
+                  Login through LiChess Account , Connect your wallet and submit verification 
                 </p>
             </div>
           </div>
@@ -138,21 +166,21 @@ const handleClick = async () => {
             </div>
             <div class="col-span-11">
                 <p>
-                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).
-                  Copy-paste the tweets URL into the above input box and fire away!
+                  Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a> and participate in games, tournaments, streams . 
+                  Copy-paste the game Id to claim tokens. 
                 </p>
-            </div>
+            </div>  
           </div>
         </div>
         <span class="text-xl font-semibold">Claimable amount expression</span>
-          <div class="max-w-prose">Enter the tweet URL and check claimable</div>
+          <div class="max-w-prose">Enter the GameId and check claimable</div>
           <div class="grid grid-cols-2 gap-4">
             <Input
               type="text"
              
-              placeholder="Tweet URL"
-              bind:this={fields.tweetURL}
-              bind:value={tweetURL}
+              placeholder="Game URL"
+              bind:this={fields.gameURL}
+              bind:value={gameURL}
               validator={required}
             >
               <span slot="label">Name</span>
@@ -160,10 +188,7 @@ const handleClick = async () => {
             <Select
               items={Options}
               bind:value={option}
-              on:change={() => {
-                  if(option.value != 2) document.getElementById("express").style.display = "grid";
-                  else document.getElementById("express").style.display = "none";
-              }}
+              on:change={handleOptionSubmit}
             >
               <span slot="label"> Select The Option: </span>
             </Select>
@@ -188,7 +213,7 @@ const handleClick = async () => {
                       {#if simulatedResult}
                         {simulatedResult?.toString()}
                       {:else}
-                        Invalid expression
+                        ''
                       {/if}
                     {:else}
                       Connect your wallet to simulate your expression
@@ -207,63 +232,12 @@ const handleClick = async () => {
         </div>
       </SectionBody>
     </Section>
-
-    <Section>
-      <SectionHeading>Claim</SectionHeading>
-      <SectionBody>
-        <span class="text-xl font-semibold">Claimable amount</span>
-          <div class="max-w-prose">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
-        <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-          <Button shrink disabled={!$signer || !deployPromise} on:click={handleClaim}> Claim </Button>
-        {#if !$signer}
-        <span class="text-gray-600">Connect your wallet to deploy</span>
-        {/if}
-      </div>
-      </SectionBody>
-      <!-- <SectionBody>
-        <Select
-              items={tknOptions}
-              bind:value={tknOption}
-              on:change={() => {
-                   if(tknOption.value != 2) document.getElementById("exp").style.display = "grid";
-                  else document.getElementById("exp").style.display = "none";
-              }}
-            >
-              <span slot="label"> Select The Option: </span>
-        </Select>
-        <div id="exp" style="display: none;">
-          <div class="grid grid-cols-2 gap-4 pb-4">
-            <Item>
-              <Label>You can {tknOption?.value == 0 ? "Buy token" : "Stake Token"} : </Label>
-              <Info>{tknOption?.value == 0 ? "10 ETKN/0.01 Matic" : "10 ETKN/0.01 Chess TKN"}</Info>
-            </Item>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <Input
-              type="text"
-              placeholder="number of tokens"
-              bind:this={fields.units}
-              bind:value={tknUnits}
-              validator={required}
-            >
-              <span slot="label">Number of tokens {tknOption?.value == 0 ? "want to Buy" : "want to stake"} </span>
-            </Input>
-          </div>
-          <div class="self-start flex flex-row items-center py-4 gap-x-2">
-            <Button shrink disabled={!$signer} on:click={handleEnergy}>Confirm</Button>
-            {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
-            {/if}
-          </div>
-        </div>
-      </SectionBody> -->
-    </Section>
-
     
   </div>
 
-  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 ">
+  <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 ">
     <StakeNBuy />
-  </div>
+  </div> 
 
-</div>
+</div> 
+

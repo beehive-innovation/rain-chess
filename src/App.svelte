@@ -2,25 +2,34 @@
   import Header from "./layout/Header.svelte";
   import Router from "svelte-spa-router";
   import Modal from "svelte-simple-modal";
+  import { signer } from "svelte-ethers-store";
 
   import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
+  import LoginHandler from "$routes/rain-chess/loginHandler.svelte";
+    import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
+
+  $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
 
   
   let routes = {};
 
   routes = {
     // Using named parameters, with last being optional
+    "/" : LiChessLogin,
+    "/player" : liChessPlayer,
+    // "/": LoginHandler,
+    "/designer": GameDesigner, 
 
-    "/": liChessPlayer,
-    "/designer": GameDesigner
 
     // Catch-all
     // This is optional, but if present it must be the last
     // '*': NotFound,
   };
+  
 </script>
-
+  
 <Modal
   unstyled={true}
   closeButton={false}
@@ -30,9 +39,13 @@
   classContent="p-6"
 >
   <Header />
+
   <main class="relative flex">
     <div class="w-full">
-        <Router {routes} />
+      <Router {routes} />
+      {#if !$signer && oAuth}
+        Connect your wallet to get started.
+      {/if}
     </div>
   </main>
 </Modal>
