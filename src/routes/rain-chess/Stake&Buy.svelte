@@ -2,26 +2,27 @@
 	import { signerAddress, signer } from 'svelte-ethers-store'
   import { EmissionsERC20 } from 'rain-sdk';
   import { required } from "../../validation";
-    import { ethers } from 'ethers';
-    import Item from './Item.svelte';
-    import Label from './Label.svelte';
-    import Info from './Info.svelte';
-    import SectionBody from './SectionBody.svelte';
-    import Section from './Section.svelte';
-    import SectionHeading from './SectionHeading.svelte';
-    import { EmissionContracts } from '$src/constants';
-    import Select from '$components/Select.svelte';
-    import Input from '$components/Input.svelte';
-    import Button from '$components/Button.svelte';
-    import { formatUnits } from 'ethers/lib/utils';
+  import { ethers } from 'ethers';
+  import Item from './Item.svelte';
+  import Label from './Label.svelte';
+  import Info from './Info.svelte';
+  import SectionBody from './SectionBody.svelte';
+  import Section from './Section.svelte';
+  import SectionHeading from './SectionHeading.svelte';
+  import { EmissionContracts } from '$src/constants';
+  import Select from '$components/Select.svelte';
+  import Input from '$components/Input.svelte';
+  import Button from '$components/Button.svelte';
+  import { formatUnits } from 'ethers/lib/utils';
 
-    let fields: any = {};
-    let tknUnits
+  let fields: any = {};
+  let tknUnits
 
   let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
   let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;  
   let GMTKNClaimBal , GMTKNDecimals, GMTKNSymbol, GMContract, GMTKNName;  
   let ImproveClaimBal , ImproveDecimals, ImproveSymbol, ImproveContract, ImproveName;  
+  let XPClaimBal , XPDecimals, XPSymbol, XPContract, XPName;  
 
 
 
@@ -50,6 +51,12 @@
     ImproveName = await ImproveContract.name()
     ImproveSymbol = await ImproveContract.symbol()
     ImproveDecimals = await ImproveContract.decimals()
+    
+    XPContract = ethers.utils.isAddress(EmissionContracts.XPContract || "") ? new EmissionsERC20(EmissionContracts.XPContract, $signer): null;
+    XPClaimBal =  await XPContract.balanceOf($signerAddress)
+    XPName = await XPContract.name()
+    XPSymbol = await XPContract.symbol()
+    XPDecimals = await XPContract.decimals()
   }
 
   $: if($signerAddress && EmissionContracts) {
@@ -83,7 +90,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/winToken.png" width='30' height='30' alt='twitter' class='me-4' />
           </div>  
           Win Token Details 
         </div>
@@ -118,7 +125,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
         <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-          <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+          <img src="/assets/EnergyToken.png" width='30' height='30' alt='twitter' class='me-4' />
         </div>  
         Energy Token Details
         </div>
@@ -153,7 +160,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/GMToken.png" width='30' height='30' alt='twitter' class='me-4' />
           </div>  
           GM Token Details
         </div>
@@ -189,7 +196,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/improveToken.png" width='30' height='30' alt='twitter' class='me-4' />
           </div>  
           Improve Token Details
         </div>
@@ -211,6 +218,42 @@
                 
               {formatUnits(ImproveClaimBal, ImproveDecimals)}
               {ImproveSymbol}
+              {/if}
+              <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
+            </Info>
+          </Item>
+        </SectionBody>
+      {:else}
+        <span class="p-4">Please Connect your wallet</span>
+      {/if}
+    </Section>
+
+    <Section> 
+      <SectionHeading>
+        <div class="mb-2 flex flex-row w-full space-y-4"> 
+          <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+            <img src="/assets/XPToken.png" width='30' height='30' alt='twitter' class='me-4' />
+          </div>  
+          XP Token Details
+        </div>
+        </SectionHeading> 
+      {#if $signerAddress}
+        <SectionBody>
+          <Item>
+            <Label>Contract Name & Address :</Label>
+            <Info>
+              {#if XPName && XPContract}
+                {XPName} ({XPContract?.address})
+              {/if}
+            </Info>
+          </Item>
+          <Item>
+            <Label>Claimable Balance :</Label>
+            <Info>
+              {#if XPClaimBal && XPDecimals && XPSymbol}
+                
+              {formatUnits(XPClaimBal, XPDecimals)}
+              {XPSymbol}
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>

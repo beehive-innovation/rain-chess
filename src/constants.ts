@@ -8,7 +8,8 @@ export const EmissionContracts = {
   contractAddress: ContractsConfigs.flow_WIN,
   energyContractAddress: ContractsConfigs.flow_ENERGY,
   GMContract: ContractsConfigs.flow_GM,
-  ImproveContract: ContractsConfigs.flow_IMPROVE
+  ImproveContract: ContractsConfigs.flow_IMPROVE,
+  XPContract: ContractsConfigs.flow_XP
 }
 
 // Example for Polygon/Matic:
