@@ -46,7 +46,7 @@
 
   let fields: any = {};
 
-  let gameURL = "";
+  let gameID = "";
   let tknUnits, gameId = ""
   let getPromise
 
@@ -75,11 +75,11 @@
   }   
 
   const handleOptionSubmit = async () => { 
-    console.log("In handle Submit : " , gameURL) 
+    console.log("In handle Submit : " , gameID) 
     if(option.value != 2) document.getElementById("express").style.display = "grid";
     else document.getElementById("express").style.display = "none";  
 
-    let claimResult = option.value == 1 ? await axios.post(`https://46.101.7.19:5002/api/v2/computeGame` , {gameId :gameURL }) : undefined
+    let claimResult = option.value == 1 ? await axios.post(`https://46.101.7.19:5002/api/v2/computeGame` , {gameId :gameID }) : undefined
     console.log(claimResult?.data)
 
     simulatedResult = claimResult != undefined ? `
@@ -96,9 +96,9 @@
       let abi =[{"inputs":[{"internalType":"address","name":"interpreter_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"address","name":"claimant_","type":"address"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"RewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"},{"internalType":"bytes","name":"data_","type":"bytes"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContext","type":"tuple[]"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"gamesClaimed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"}],"name":"generateStack","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"}]
       let lichessContract = new ethers.Contract(contractAddress ,abi ,$signer)  
 
-      let gameData = await axios.post('https://46.101.7.19:5002/api/v2/processGame' , {gameId : gameURL , winnerAddress : $signerAddress}) 
+      let gameData = await axios.post('https://46.101.7.19:5002/api/v2/processGame' , {gameId : gameID , winnerAddress : $signerAddress}) 
       
-      console.log("gameURL  :" , ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameURL))).toString())
+      console.log("gameID  :" , ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString())
 
       const contextLiChess = {
         winner: $signerAddress, // winner 
@@ -115,7 +115,7 @@
         id_GM: ContractsConfigs.flowStates_GM.hex,
         flow_IMPROVE: ContractsConfigs.flow_IMPROVE ,
         id_IMPROVE: ContractsConfigs.flowStates_IMPROVE.hex ,
-        gameId: ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameURL))).toString()
+        gameId: ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()
       };  
       
       let tx = await lichessContract.claimReward(contextLiChess, "0x00", [gameData.data.data]) 
@@ -178,9 +178,9 @@
             <Input
               type="text"
              
-              placeholder="Game URL"
-              bind:this={fields.gameURL}
-              bind:value={gameURL}
+              placeholder="Game ID"
+              bind:this={fields.gameID}
+              bind:value={gameID}
               validator={required}
             >
               <span slot="label">Name</span>
