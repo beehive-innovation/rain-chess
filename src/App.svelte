@@ -14,7 +14,7 @@
   routes = {
     // Using named parameters, with last being optional
     "/" : liChessPlayer,
-    "/code": LoginHandler,
+    // "/code": LoginHandler,
     "/designer": GameDesigner, 
 
 

@@ -27,7 +27,8 @@ import { signer, signerAddress } from "svelte-ethers-store";
   import {auth } from '$src/stores'
   import { location, querystring } from 'svelte-spa-router'
   import { EmissionContracts } from "$src/constants"; 
-  import { Verify } from "rain-sdk" 
+  import { Verify } from "rain-sdk"  
+  import ContractsConfigs from "../../../mumbai.json"
 
 
   import  { Auth } from "$src/test";

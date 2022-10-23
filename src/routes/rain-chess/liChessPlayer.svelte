@@ -26,6 +26,7 @@
   import { EmissionContracts } from "$src/constants"; 
   import { Verify } from "rain-sdk" 
 
+  import ContractsConfigs from "../../../mumbai.json"
 
   import  { Auth } from "$src/test";
   const { open } = getContext('simple-modal') 
@@ -43,32 +44,32 @@
   return bufView;
 }
 
-  $: if(urlParams.has('code')) { 
-    const data =async () => {
-      console.log("init called ") 
-     await $auth.init() 
-     console.log($auth.me,"hii") 
-     if($auth.me && $signer){
+  // $: if(urlParams.has('code')) { 
+  //   const data =async () => {
+  //     console.log("init called ") 
+  //    await $auth.init() 
+  //    console.log($auth.me,"hii") 
+  //    if($auth.me && $signer){
 
-       let verifyContract = new Verify('0xb8c01dee6a0f920d51ea137d4908f65b13c41bc1' , $signer)  
+  //      let verifyContract = new Verify('0xb8c01dee6a0f920d51ea137d4908f65b13c41bc1' , $signer)  
        
-       let encoder = new TextEncoder()
+  //      let encoder = new TextEncoder()
   
-        let verifySubmit = await verifyContract.approve([{
-          account : $signerAddress , data : str2ab($auth.me.id)
-        }])  
-      console.log(verifySubmit)
-     }  
+  //       let verifySubmit = await verifyContract.approve([{
+  //         account : $signerAddress , data : str2ab($auth.me.id)
+  //       }])  
+  //     console.log(verifySubmit)
+  //    }  
 
-    } 
+  //   } 
 
     
-    data()
+  //   data()
     
 
    
 
-  } 
+  // } 
 
   
 
@@ -109,46 +110,126 @@
       const simulator = new EmissionsERC20JSVM($parserVmStateConfig, {signer: $signer})
       simulatedResult = await simulator.run({context: [$signerAddress]})
     }
+  }   
+
+  const handleOptionSubmit = async () => { 
+    console.log("In handle Submit : " , tweetURL) 
+    if(option.value != 2) document.getElementById("express").style.display = "grid";
+    else document.getElementById("express").style.display = "none";  
+
+    let claimResult = await axios.post(`http://localhost:5000/api/v2/computeWin` , {gameId :tweetURL })  
+    console.log(claimResult.data)
+
+    simulatedResult = `
+      GM Tokens Won : ${claimResult.data.data.GM} ,
+      IMPRV Tokens Won : ${claimResult.data.data.IMPRV} ,
+      XP Tokens Won : ${claimResult.data.data.XP} ,
+
+    `
+
   }
 
-  const handleSubmit = async () =>{  
 
-     let id = tweetURL.split('/').pop()  
 
-     let gameId = `vpNeHkst`   
 
-    let contractAgruments : GameStruct = {
-      timestamp : 1665036973200 , 
-      white : '0x973EbeF3889daACBb9bB7f97AbfD4f6e20D26440' ,
-      black : '0x0000000000000000000000000000000000000000' ,
-      whiteResult : 0 , 
-      blackResult : 1 ,
-      whiteElo : 1500 ,
-      BlackElo : 1520
-   }
+    const claimFlowReward = async () => {  
 
-     // , WhiteRatingDiff , BlackRatingDiff added later 
-     // arr = [ timestamp , white , black , whiteResult , blackResult , whiteElo , BlackElo  ]  
-     // sample values = (uint256 of )[ 1665036973200 , 0x973EbeF3889daACBb9bB7f97AbfD4f6e20D26440 , 0x0000000000000000000000000000000000000000 , 0 , 1 , 1500 , 1520  ]
+      let contractAddress = ContractsConfigs.liChess 
+      let abi = [{"inputs":[{"internalType":"address","name":"interpreter_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"address","name":"claimant_","type":"address"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"RewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"},{"internalType":"bytes","name":"data_","type":"bytes"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContext","type":"tuple[]"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"gamesClaimed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"experiencePoints","type":"uint256"},{"internalType":"bool","name":"isImproved","type":"bool"},{"internalType":"bool","name":"isBeatenGM","type":"bool"},{"internalType":"address","name":"flow_ENERGY","type":"address"},{"internalType":"uint256","name":"id_ENERGY","type":"uint256"},{"internalType":"address","name":"flow_WIN","type":"address"},{"internalType":"uint256","name":"id_WIN","type":"uint256"},{"internalType":"address","name":"flow_XP","type":"address"},{"internalType":"uint256","name":"id_XP","type":"uint256"},{"internalType":"address","name":"flow_GM","type":"address"},{"internalType":"uint256","name":"id_GM","type":"uint256"},{"internalType":"address","name":"flow_IMPROVE","type":"address"},{"internalType":"uint256","name":"id_IMPROVE","type":"uint256"},{"internalType":"uint256","name":"gameId","type":"uint256"}],"internalType":"struct GameData","name":"context_","type":"tuple"}],"name":"generateStack","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"}]
+      let lichessContract = new ethers.Contract(contractAddress ,abi ,$signer)  
 
-    //  let verifyReq
-    //  if(option.value == 0){
-    //    verifyReq = await axios.post('http://localhost:5000/api/v2/registerChessId' , {
-    //      tweetId :  id
-    //    })  
-       
-    //  }else if(option.value == 1){
-    //    let address = await $signer.getAddress() 
-       
-    //    verifyReq = await axios.post('http://localhost:5000/api/v2/chessGame' , {
-    //      tweetId :  id ,
-    //      address : address.toLowerCase()
-    //    })   
-    //  }  
-    //  console.log(verifyReq)
-    //  simulatedResult = `Claimable Tokens : ${verifyReq.data.data.gameTokens}` 
-    //  tweetURL = `` 
-} 
+      let gameData = await axios.post('http://localhost:5000/api/v2/processGame' , {gameId : tweetURL , winnerAddress : $signerAddress}) 
+      
+      // // const isBeatenGrandMaster = gameData.data.data[0];
+      // // const isImproved = gameData.data.data[1];
+      // // const xpAmount = gameData.data.data[2]; // to be computed  
+
+      // const isBeatenGrandMaster = ;
+      // const isImproved = 1;
+      // const xpAmount = '100000000000000000000';  // to be computed 
+
+                      
+      // const context = [$signerAddress , isBeatenGrandMaster, isImproved, xpAmount] 
+      // const messageHash = ethers.utils.solidityKeccak256(['uint256[]'], [context]); 
+
+      // const signedContext = {
+      //   signer: $signerAddress, // bot adddress  
+      //   signature: $signer.signMessage(ethers.utils.arrayify(messageHash)),
+      //   context: context
+      // } 
+
+          const contextLiChess = {
+            winner: $signerAddress, // winner 
+            experiencePoints: 10,
+            isImproved: true,
+            isBeatenGM: true,
+            flow_ENERGY: ContractsConfigs.flow_ENERGY,
+            id_ENERGY: ContractsConfigs.flowStates_ENERGY.hex,
+            flow_WIN: ContractsConfigs.flow_WIN ,
+            id_WIN: ContractsConfigs.flowStates_WIN.hex,
+            flow_XP: ContractsConfigs.flow_XP ,
+            id_XP: ContractsConfigs.flowStates_XP.hex,
+            flow_GM: ContractsConfigs.flow_GM ,
+            id_GM: ContractsConfigs.flowStates_GM.hex,
+            flow_IMPROVE: ContractsConfigs.flow_IMPROVE ,
+            id_IMPROVE: ContractsConfigs.flowStates_IMPROVE.hex ,
+            gameId: 12781331
+        };  
+
+        
+
+        let tx = await lichessContract.claimReward(contextLiChess, "0x00", [gameData.data.data]) 
+        let res =await  tx.wait() 
+        console.log(res)
+
+
+    }
+ 
+  
+
+    const handleSubmit = async () =>{   
+      
+        console.log("tweetURL : " , tweetURL )    
+      
+          let  gameIdNumber = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes('XpWCxa7e')))
+
+            // sample computed data from backend
+            let gameData = {  
+              gameId : gameIdNumber , 
+              isbeatenGM : false , // winner 
+              winnersAddress : '0xD09c80BD55FcA5a3B2407106b65f6ab82E871F21' , 
+              XPPoints : 10 , 
+              beatenBetterPlayer : true
+            }   
+
+            let abiCoder = new ethers.utils.AbiCoder()  
+            let encodedData = abiCoder.encode(["uint256" , "bool", "string" , "uint256" , "bool" ], [6372689420023314277 , false, "0xD09c80BD55FcA5a3B2407106b65f6ab82E871F21" , 10 , true  ]) 
+
+            console.log("encodedData : " , encodedData )   
+
+
+            
+            // sign data from a specific key , will come from backend 
+            let privateKey = `5a293aa138d35e4627b0f723693fffe4b4e75f34d536146967d387d334335a89`   
+
+            const provider = new ethers.providers.JsonRpcProvider('https://matic-mumbai.chainstacklabs.com')
+            let wallet = new ethers.Wallet('5a293aa138d35e4627b0f723693fffe4b4e75f34d536146967d387d334335a89', provider)   
+            
+            
+            
+            
+            let sig = await wallet.signMessage(encodedData) 
+            console.log(sig) 
+
+
+
+
+
+
+
+      
+
+    } 
 
 const handleClaim =async () => {
   let emissionsContract = new EmissionsERC20(EmissionContracts.contractAddress, $signer)   
@@ -168,23 +249,16 @@ const handleClick = async () => {
 
     const { validationResult } = await validateFields(fields);
     if (!validationResult) return;
-    deployPromise = handleSubmit();
+    deployPromise = claimFlowReward();
   }; 
 
-  const loginWithLichess = async () => { 
-
-    console.log("auth", $auth);
-    
-      let data = await $auth.login()   
-      console.log("data", data);
-      
-};
-console.log("data", params);
+ 
+// console.log("data", params);
 
 
 </script>
 
-<!-- <div class="flex gap-x-3 relative">
+ <div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
     <span class="text-3xl font-semibold">liChess Player</span>
     
@@ -200,14 +274,15 @@ console.log("data", params);
     <Section>
       <SectionHeading>Verify (2)</SectionHeading>
       <SectionBody>
-        <div class="mb-2 flex flex-col w-full space-y-4">
+        <div class="mb-2 flex flex-col w-full space-y-4"> 
+
           <div class="grid grid-cols-12 items-center" >
             <div class="col-span-1 grid justify-center gap-y-4">
               <img src="/assets/twitter.png" width='32' height='32' alt='twitter' class='me-4' />
             </div>
             <div class="col-span-11">
                 <p>
-                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).                  Copy-paste the tweets URL into the above input box and fire away!
+                  Login through LiChess Account , Connect your wallet and submit verification 
                 </p>
             </div>
           </div>
@@ -217,14 +292,14 @@ console.log("data", params);
             </div>
             <div class="col-span-11">
                 <p>
-                  Verify via Twitter, make a <a target='_blank' class="text-blue-400 underline" href='https://twitter.com/intent/tweet?text=Requesting%20verifcation%20of%20address%200x0000000000000000000000000000000000000000%20for%20%40rainprotocol.%20Check%20out%20Rain%20Rrotocol%20at%20https%3A%2F%2Fdocs.rainprotocol.xyz%2F%20%23rainprotocol%20%23nft'>tweet</a> with your Ethereum address pasted into the contents (surrounding text doesn't matter).
-                  Copy-paste the tweets URL into the above input box and fire away!
+                  Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a> and participate in games, tournaments, streams . 
+                  Copy-paste the game URL to claim tokens. 
                 </p>
-            </div>
+            </div>  
           </div>
         </div>
         <span class="text-xl font-semibold">Claimable amount expression</span>
-          <div class="max-w-prose">Enter the tweet URL and check claimable</div>
+          <div class="max-w-prose">Enter the GameId and check claimable</div>
           <div class="grid grid-cols-2 gap-4">
             <Input
               type="text"
@@ -239,10 +314,7 @@ console.log("data", params);
             <Select
               items={Options}
               bind:value={option}
-              on:change={() => {
-                  if(option.value != 2) document.getElementById("express").style.display = "grid";
-                  else document.getElementById("express").style.display = "none";
-              }}
+              on:change={handleOptionSubmit}
             >
               <span slot="label"> Select The Option: </span>
             </Select>
@@ -267,7 +339,7 @@ console.log("data", params);
                       {#if simulatedResult}
                         {simulatedResult?.toString()}
                       {:else}
-                        Invalid expression
+                        ''
                       {/if}
                     {:else}
                       Connect your wallet to simulate your expression
@@ -287,7 +359,7 @@ console.log("data", params);
       </SectionBody>
     </Section>
 
-    <Section>
+   <!--  <Section>
       <SectionHeading>Claim</SectionHeading>
       <SectionBody>
         <span class="text-xl font-semibold">Claimable amount</span>
@@ -298,8 +370,10 @@ console.log("data", params);
         <span class="text-gray-600">Connect your wallet to deploy</span>
         {/if}
       </div>
-      </SectionBody>
-      <!-- <SectionBody>
+      </SectionBody>  
+
+      
+       <SectionBody>
         <Select
               items={tknOptions}
               bind:value={tknOption}
@@ -335,8 +409,8 @@ console.log("data", params);
             {/if}
           </div>
         </div>
-      </SectionBody> 
-    </Section>
+      </SectionBody>  
+    </Section>-->
 
     
   </div>
@@ -345,14 +419,9 @@ console.log("data", params);
     <StakeNBuy />
   </div> 
 
-</div>  -->
+</div>  
 
-<div>
-  <button on:click={loginWithLichess}>Login With LiChess </button>
-  <!-- <div>
-    current page location:   {$location}
-   </div>
-   <div>current page query:   {$querystring}</div>
-   <div>current page param:   {params}</div> -->
-</div>
+
+ 
+
 

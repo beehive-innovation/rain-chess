@@ -19,20 +19,30 @@
     let tknUnits
 
   let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
-  let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;
+  let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;  
+  let GMTKNClaimBal , GMTKNDecimals, GMTKNSymbol, GMContract, GMTKNName;  
+
+
+
   const getContract = async () =>{
     chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
     console.log("chesssContract", chesssContract);
     chessTKNName = await chesssContract.name()
-    chessTKNClaimBal = await chesssContract.calculateClaim($signerAddress)
+    chessTKNClaimBal = await chesssContract.balanceOf($signerAddress)
     chessTKNSymbol = await chesssContract.symbol()
     chessTKNDecimals = await chesssContract.decimals() 
 
     energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
-    energyTKNClaimBal =  await energyContract.calculateClaim($signerAddress)
+    energyTKNClaimBal =  await energyContract.balanceOf($signerAddress)
     energyTKNName = await energyContract.name()
     energyTKNSymbol = await energyContract.symbol()
-    energyTKNDecimals = await energyContract.decimals()
+    energyTKNDecimals = await energyContract.decimals()  
+
+    GMContract = ethers.utils.isAddress(EmissionContracts.GMContract || "") ? new EmissionsERC20(EmissionContracts.GMContract, $signer): null;
+    GMTKNClaimBal =  await GMContract.balanceOf($signerAddress)
+    GMTKNName = await energyContract.name()
+    GMTKNSymbol = await energyContract.symbol()
+    GMTKNDecimals = await energyContract.decimals()
   }
 
   $: if($signerAddress && EmissionContracts) {
@@ -67,8 +77,11 @@
     <!-- <div class="border-t border-gray-400 h-full">
       <div class="border-b border-gray-400 p-2 w-full font-semibold">Other liChess Expressions</div>
       <div class="flex flex-col p-2 overflow-scroll h-full"> -->
-    <Section>
-      <SectionHeading>Chess Token Details</SectionHeading>
+    <Section> 
+      
+      
+      <SectionHeading>Chess Token Details</SectionHeading> 
+      
       {#if $signerAddress}
         <SectionBody>
           <Item>
@@ -90,16 +103,14 @@
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
-          <Item>
+          <!-- <Item>
             <Button
               small ={true}
               shrink
               >Claim
-              <!-- on:click={() => {
-                  claimPromise = claim(token.address);
-              }} -->
+             
             </Button>
-          </Item>
+          </Item> -->
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
@@ -128,16 +139,50 @@
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
-          <Item>
+          <!-- <Item>
             <Button
               small ={true}
               shrink
               >Claim
-              <!-- on:click={() => {
-                  claimPromise = claim(token.address);
-              }} -->
+              
             </Button>
+          </Item> -->
+        </SectionBody>
+      {:else}
+        <span class="p-4">Please Connect your wallet</span>
+      {/if}
+    </Section> 
+    <Section>
+      <SectionHeading>GM Token Details</SectionHeading>
+      {#if $signerAddress}
+        <SectionBody>
+          <Item>
+            <Label>Contract Name & Address :</Label>
+            <Info>
+              {#if GMTKNName && GMContract}
+                {GMTKNName} ({GMContract?.address})
+              {/if}
+            </Info>
           </Item>
+          <Item>
+            <Label> Balance :</Label>
+            <Info>
+              {#if GMTKNDecimals && GMTKNClaimBal && GMTKNSymbol}
+                
+              {formatUnits(GMTKNClaimBal, GMTKNDecimals)}
+              {GMTKNSymbol}
+              {/if}
+              <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
+            </Info>
+          </Item>
+          <!-- <Item>
+            <Button
+              small ={true}
+              shrink
+              >Claim
+             
+            </Button>
+          </Item> -->
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
