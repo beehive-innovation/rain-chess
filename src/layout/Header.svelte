@@ -24,7 +24,7 @@
       {#if oAuth}
         <WalletConnect />
       {:else}
-        <LiChessLogin />
+        <LiChessLogin show={false} />
       {/if}
 
     <span>

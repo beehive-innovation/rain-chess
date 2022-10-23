@@ -43,9 +43,7 @@
   <main class="relative flex">
     <div class="w-full">
       <Router {routes} />
-      {#if oAuth && $signer}
-        <Router {routes} />
-      {:else if !$signer && oAuth}
+      {#if !$signer && oAuth}
         Connect your wallet to get started.
       {/if}
     </div>

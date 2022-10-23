@@ -1,9 +1,15 @@
 <script lang="ts">
     import { signer, signerAddress } from "svelte-ethers-store";
-import { getContext } from "svelte";
-import { Verify } from "rain-sdk" 
-import {auth } from '$src/stores'
+    import { getContext } from "svelte";
+    import { Verify } from "rain-sdk" 
+    import {auth } from '$src/stores'
     import Button from "$components/Button.svelte";
+    import { push, replace } from "svelte-spa-router";
+
+    export let show = true;
+
+    console.log("show", show);
+    
 
 const urlParams = new URLSearchParams(window.location.search);
   console.log("Has data ? = ", urlParams.has('code'));
@@ -34,6 +40,7 @@ const urlParams = new URLSearchParams(window.location.search);
         }])  
       console.log(verifySubmit)
      }  
+     push('/player')
 
     } 
     data()
@@ -53,7 +60,7 @@ console.log("auth", $auth);
 
 <div class="flex justify-center gap-y-3">
   <div class="flex flex-col p-8">
-        <div class="py-4">Please log in to continue.</div>
+        <div class={`py-4 ${show ? "flex" : "hidden"} `}>Please log in to continue.</div>
         <Button on:click={loginWithLichess}>Login With LiChess </Button>
       </div>
       

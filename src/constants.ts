@@ -1,13 +1,14 @@
 import WalletConnect from "@walletconnect/web3-provider/dist/umd/index.min";
-import Fortmatic from "fortmatic"; 
+import Fortmatic from "fortmatic";
 
 import ContractsConfigs from "../mumbai.json"
 
 
 export const EmissionContracts = {
   contractAddress: ContractsConfigs.flow_WIN,
-  energyContractAddress: ContractsConfigs.flow_ENERGY ,
-  GMContract : ContractsConfigs.flow_GM
+  energyContractAddress: ContractsConfigs.flow_ENERGY,
+  GMContract: ContractsConfigs.flow_GM,
+  ImproveContract: ContractsConfigs.flow_IMPROVE
 }
 
 // Example for Polygon/Matic:

@@ -21,6 +21,7 @@
   let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
   let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;  
   let GMTKNClaimBal , GMTKNDecimals, GMTKNSymbol, GMContract, GMTKNName;  
+  let ImproveClaimBal , ImproveDecimals, ImproveSymbol, ImproveContract, ImproveName;  
 
 
 
@@ -40,9 +41,15 @@
 
     GMContract = ethers.utils.isAddress(EmissionContracts.GMContract || "") ? new EmissionsERC20(EmissionContracts.GMContract, $signer): null;
     GMTKNClaimBal =  await GMContract.balanceOf($signerAddress)
-    GMTKNName = await energyContract.name()
-    GMTKNSymbol = await energyContract.symbol()
-    GMTKNDecimals = await energyContract.decimals()
+    GMTKNName = await GMContract.name()
+    GMTKNSymbol = await GMContract.symbol()
+    GMTKNDecimals = await GMContract.decimals()
+   
+    ImproveContract = ethers.utils.isAddress(EmissionContracts.ImproveContract || "") ? new EmissionsERC20(EmissionContracts.ImproveContract, $signer): null;
+    ImproveClaimBal =  await ImproveContract.balanceOf($signerAddress)
+    ImproveName = await ImproveContract.name()
+    ImproveSymbol = await ImproveContract.symbol()
+    ImproveDecimals = await ImproveContract.decimals()
   }
 
   $: if($signerAddress && EmissionContracts) {
@@ -68,20 +75,19 @@
      console.log(reuslt )  
 
   }
-
-
 </script>
 
 <div class="w-full h-full">
   <div class="flex flex-col gap-y-6 p-2 overflow-scroll h-full">
-    <!-- <div class="border-t border-gray-400 h-full">
-      <div class="border-b border-gray-400 p-2 w-full font-semibold">Other liChess Expressions</div>
-      <div class="flex flex-col p-2 overflow-scroll h-full"> -->
     <Section> 
-      
-      
-      <SectionHeading>Chess Token Details</SectionHeading> 
-      
+      <SectionHeading>
+        <div class="mb-2 flex flex-row w-full space-y-4"> 
+          <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+          </div>  
+          Win Token Details 
+        </div>
+      </SectionHeading> 
       {#if $signerAddress}
         <SectionBody>
           <Item>
@@ -103,21 +109,20 @@
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
-          <!-- <Item>
-            <Button
-              small ={true}
-              shrink
-              >Claim
-             
-            </Button>
-          </Item> -->
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
       {/if}
     </Section>
     <Section>
-      <SectionHeading>Energy Token Details</SectionHeading>
+      <SectionHeading>
+        <div class="mb-2 flex flex-row w-full space-y-4"> 
+        <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+          <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+        </div>  
+        Energy Token Details
+        </div>
+      </SectionHeading>
       {#if $signerAddress}
         <SectionBody>
           <Item>
@@ -139,21 +144,20 @@
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
-          <!-- <Item>
-            <Button
-              small ={true}
-              shrink
-              >Claim
-              
-            </Button>
-          </Item> -->
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
       {/if}
     </Section> 
     <Section>
-      <SectionHeading>GM Token Details</SectionHeading>
+      <SectionHeading>
+        <div class="mb-2 flex flex-row w-full space-y-4"> 
+          <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+          </div>  
+          GM Token Details
+        </div>
+        </SectionHeading>
       {#if $signerAddress}
         <SectionBody>
           <Item>
@@ -175,142 +179,46 @@
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
-          <!-- <Item>
-            <Button
-              small ={true}
-              shrink
-              >Claim
-             
-            </Button>
-          </Item> -->
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
       {/if}
     </Section>
-    <Section>
-      <SectionHeading>Buy Tokens (2)</SectionHeading>
-      <SectionBody>
-        <Select
-              items={tknOptions}
-              bind:value={tknOption}
-              on:change={() => {
-                   if(tknOption.value != 2) document.getElementById("exp").style.display = "grid";
-                  else document.getElementById("exp").style.display = "none";
-              }}
-            >
-              <span slot="label"> Select The Option: </span>
-        </Select>
-        <div id="exp" style="display: none;">
-          <div class="grid grid-cols-1 gap-4 pb-4">
-            <Item>
-              <Label>You can {tknOption?.value == 0 ? "Buy token" : "Stake Token"} : </Label>
-              <Info>{tknOption?.value == 0 ? "10 ETKN/0.01 Matic" : "10 ETKN/0.01 Chess TKN"}</Info>
-            </Item>
-          </div>
-          <div class="grid grid-cols-1 gap-4">
-            <Input
-              type="text"
-              placeholder="number of tokens"
-              bind:this={fields.units}
-              bind:value={tknUnits}
-              validator={required}
-            >
-              <span slot="label">Number of tokens {tknOption?.value == 0 ? "want to Buy" : "want to stake"} </span>
-            </Input>
-          </div>
-          <div class="self-start flex flex-row items-center py-4 gap-x-2">
-            <Button shrink disabled={!$signer} on:click={handleEnergy}>Confirm</Button>
-            {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
-            {/if}
-          </div>
+
+    <Section> 
+      <SectionHeading>
+        <div class="mb-2 flex flex-row w-full space-y-4"> 
+          <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+            <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+          </div>  
+          Improve Token Details
         </div>
-      </SectionBody>
-    </Section>
-    <Section>
-      <SectionHeading>Stake Tokens (2)</SectionHeading>
-      <SectionBody>
-        <!-- <Select
-              items={tknOptions}
-              bind:value={tknOption}
-              on:change={() => {
-                   if(tknOption.value != 2) document.getElementById("exp").style.display = "grid";
-                  else document.getElementById("exp").style.display = "none";
-              }}
-            >
-              <span slot="label"> Select The Option: </span>
-        </Select> -->
-        <div>
-          <div class="grid grid-cols-1 gap-4 pb-4">
-            <span>Number of ches tkn staked</span>
-            <!-- <Item>
-              <Label>You can {tknOption?.value == 0 ? "Buy token" : "Stake Token"} : </Label>
-              <Info>{tknOption?.value == 0 ? "10 ETKN/0.01 Matic" : "10 ETKN/0.01 Chess TKN"}</Info>
-            </Item> -->
-          </div>
-          <div class="grid grid-cols-1 gap-4">
-            <Input
-              type="text"
-              placeholder="number of tokens to stake"
-              bind:this={fields.units}
-              bind:value={tknUnits}
-              validator={required}
-            >
-              <span slot="label">Number of tokens want to stake </span>
-            </Input>
-          </div>
-          <div class="self-start flex flex-row items-center py-4 gap-x-2">
-            <Button shrink disabled={!$signer} on:click={handleEnergy}>Confirm</Button>
-            {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
-            {/if}
-          </div>
-        </div>
-      </SectionBody>
-    </Section>
-  
-      <!-- <Section>
-      <SectionHeading>Chess Token Details</SectionHeading>
+        </SectionHeading> 
       {#if $signerAddress}
         <SectionBody>
           <Item>
-            <Label>Wallet Address :</Label>
+            <Label>Contract Name & Address :</Label>
             <Info>
-              {$signerAddress}
+              {#if ImproveName && ImproveContract}
+                {ImproveName} ({ImproveContract?.address})
+              {/if}
             </Info>
           </Item>
           <Item>
-            <Label>Wallet Balance :</Label>
+            <Label>Claimable Balance :</Label>
             <Info>
-              {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN
+              {#if ImproveClaimBal && ImproveDecimals && ImproveSymbol}
+                
+              {formatUnits(ImproveClaimBal, ImproveDecimals)}
+              {ImproveSymbol}
+              {/if}
+              <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
           </Item>
         </SectionBody>
       {:else}
         <span class="p-4">Please Connect your wallet</span>
       {/if}
-  </Section>
-    <Section>
-        <SectionHeading>Enery Token Details</SectionHeading>
-        {#if $signerAddress}
-          <SectionBody>
-            <Item>
-              <Label>Wallet Address :</Label>
-              <Info>
-                {$signerAddress}
-              </Info>
-            </Item>
-            <Item>
-              <Label>Wallet Balance :</Label>
-              <Info>
-                {energyBalance && energyContractDecimals ? ethers.utils.formatUnits(energyBalance, energyContractDecimals) : ""} Energy TKN
-              </Info>
-            </Item>
-          </SectionBody>
-        {:else}
-          <span class="p-4">Please Connect your wallet</span>
-        {/if}
-    </Section> -->
+    </Section>
 </div>
 </div>
