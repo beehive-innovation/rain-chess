@@ -6,7 +6,7 @@
     import Button from "$components/Button.svelte";
     import { push, replace } from "svelte-spa-router";
 
-    export let show = true, displayComp = true;
+    export let show = true;
 
     console.log("show", show);
     
@@ -39,7 +39,8 @@ const urlParams = new URLSearchParams(window.location.search);
           account : $signerAddress , data : str2ab($auth.me.id)
         }])  
       console.log(verifySubmit)
-     }  
+     }
+    //  console.log("urlParams", window.location); 
      push('/player')
 
     } 
@@ -58,7 +59,7 @@ console.log("auth", $auth);
 
 </script>
 
-<div class={`flex justify-center gap-y-3 ${show ? "flex" : "hidden"}`}>
+<div class="flex justify-center gap-y-3">
   <div class="flex flex-col p-8">
         <div class={`py-4 ${show ? "flex" : "hidden"} `}>Please log in to continue.</div>
         <Button on:click={loginWithLichess}>Login With LiChess </Button>
