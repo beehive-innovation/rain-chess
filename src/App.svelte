@@ -3,14 +3,23 @@
   import Router from "svelte-spa-router";
   import Modal from "svelte-simple-modal";
   import { signer } from "svelte-ethers-store";
+  import {auth } from '$src/stores'
 
   import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
   import LoginHandler from "$routes/rain-chess/loginHandler.svelte";
-    import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
   // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
 
   $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
+
+  $: if(oAuth){
+    const data =async () =>{
+      await $auth.init() 
+    }
+
+    data()
+  }
 
   
   let routes = {};
@@ -43,9 +52,6 @@
   <main class="relative flex">
     <div class="w-full">
       <Router {routes} />
-      {#if !$signer && oAuth}
-        Connect your wallet to get started.
-      {/if}
     </div>
   </main>
 </Modal>

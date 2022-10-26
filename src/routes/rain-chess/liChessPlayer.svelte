@@ -21,34 +21,54 @@
   import {EmissionsERC20} from "rain-sdk" 
   import { ethers } from 'ethers';  
   import axios from 'axios'
-  import {auth } from '$src/stores'
-  import { location, querystring } from 'svelte-spa-router'
-  import { EmissionContracts } from "$src/constants"; 
-  import { Verify } from "rain-sdk" 
 
   import ContractsConfigs from "../../../mumbai.json"
 
+  $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
+
   import  { Auth } from "$src/test";
   const { open } = getContext('simple-modal') 
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log("Has data ? = ", urlParams.has('code'));
-  console.log("\nWOrld");   
-  
-  function str2ab(str) {
-    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    var bufView = new Uint8Array(buf);
-    for (var i = 0, strLen = str.length; i < strLen; i++) {
-      bufView[i] = str.charCodeAt(i);
-    }
-    return bufView;
-  }
 
   let fields: any = {};
 
   let gameID = "";
   let tknUnits, gameId = ""
   let getPromise
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  $: if(urlParams.has('code')) { 
+ 
+    //  if($auth.me && $signer){
+
+    //    let verifyContract = new Verify('0xb8c01dee6a0f920d51ea137d4908f65b13c41bc1' , $signer)  
+       
+    //    let encoder = new TextEncoder()
+  
+    //     let verifySubmit = await verifyContract.approve([{
+    //       account : $signerAddress , data : str2ab($auth.me.id)
+    //     }])  
+    //   console.log(verifySubmit)
+    //  }
+
+    const data = async () =>{
+      let token = oAuth?.accessToken?.value
+
+      console.log("token", oAuth, token);
+      
+      window.history.pushState({}, null, '/');
+      push('/player')
+
+      let accData = await axios.get("https://lichess.org/api/account", {
+        "Autherization" : `Bearer ${token}`
+      })
+
+      console.log("acc", accData);
+      
+    }
+    data()
+
+  } 
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
 

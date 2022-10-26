@@ -2,7 +2,7 @@
 // import WalletConnect from "@walletconnect/web3-provider/dist/umd/index.min";
 // import type { BigNumber, BigNumberish } from "ethers"; 
 
-import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce'; 
+import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce';
 
 // export type GameStruct = {
 //     timestamp: BigNumberish ; 
@@ -31,10 +31,10 @@ import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce';
 // export const lichessHost = 'http://l.org';
 export const scopes = ['board:play'];
 export const clientId = 'lichess-api-demo';
-export const lichessHost = 'https://lichess.org'; 
-export const BASE_PATH = location.pathname.replace(/\/$/, ''); 
+export const lichessHost = 'https://lichess.org';
+export const BASE_PATH = location.pathname.replace(/\/$/, '');
 
-export const clientUrl = `${location.protocol}//${location.host}${BASE_PATH || '/'}`; 
+export const clientUrl = `${location.protocol}//${location.host}${BASE_PATH || '/'}#/player`;
 //  export const clientUrl = `http://localhost:5173/`; 
 
 
@@ -49,12 +49,12 @@ export interface Me {
 export class Auth {
   oauth = new OAuth2AuthCodePKCE({
     authorizationUrl: `${lichessHost}/oauth`,
-    tokenUrl: `${lichessHost}/api/token`, 
+    tokenUrl: `${lichessHost}/api/token`,
     clientId,
     scopes,
     redirectUrl: clientUrl,
     onAccessTokenExpiry: refreshAccessToken => refreshAccessToken(),
-    onInvalidGrant: _retry => {},
+    onInvalidGrant: _retry => { },
   });
   me?: Me;
 
@@ -68,11 +68,14 @@ export class Auth {
     if (!this.me) {
       try {
         const hasAuthCode = await this.oauth.isReturningFromAuthServer();
-        if (hasAuthCode) await this.authenticate();
+        if (hasAuthCode) {
+          await this.authenticate();
+        }
       } catch (err) {
         console.error(err);
       }
     }
+
   }
 
   async login() {

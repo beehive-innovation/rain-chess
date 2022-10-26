@@ -32,11 +32,7 @@ import { signer, signerAddress } from "svelte-ethers-store";
 
 
   import  { Auth } from "$src/test";
-  const { open } = getContext('simple-modal') 
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log("Has data ? = ", urlParams.has('code'));
-  console.log("\nWOrld");   
+  const { open } = getContext('simple-modal')   
   
   function str2ab(str) {
   var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
@@ -64,8 +60,8 @@ import { signer, signerAddress } from "svelte-ethers-store";
       console.log(verifySubmit)
      }
     //  pop()
-    console.log("urlParams", window.location);  
-     replace('/player')
+    // console.log("urlParams", window.location);  
+    //  replace('/player')
     } 
     data()
   } 
