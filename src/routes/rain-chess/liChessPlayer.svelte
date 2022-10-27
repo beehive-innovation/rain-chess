@@ -62,7 +62,7 @@
        console.log('authToken : ' , authToken.accessToken.value) 
        oAuth = authToken
 
-       let authResult = await axios.post('http://localhost:5000/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
+       let authResult = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
        console.log('authResult : ' , authResult ) 
       //  if(!authResult.data.status){
       //   alert(`${authResult.data.message}`)
@@ -133,7 +133,7 @@
     if(option.value != 2) document.getElementById("express").style.display = "grid";
     else document.getElementById("express").style.display = "none";  
 
-    let claimResult = option.value == 1 ? await axios.post(`http://localhost:5000/api/v2/computeGame` ,{gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth?.accessToken?.value}) : undefined
+    let claimResult = option.value == 1 ? await axios.post(`https://18d66c4b6c88.in.ngrok.io/api/v2/computeGame` ,{gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth?.accessToken?.value}) : undefined
     console.log(claimResult?.data)
 
     simulatedResult = claimResult != undefined ? `
@@ -145,8 +145,17 @@
   } 
 
   const handleTokenOptionSubmit = async () => { 
-    let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()
-    if(tokenOptionValue.value == 1){
+    try { 
+      
+      let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString() 
+      
+      let contractEnergy = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI, $signer)
+      let tx = await contractEnergy.flow(ContractsConfigs.flowStates_ENERGY_BURN.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let receipt = await tx.wait()  
+      console.log(receipt)   
+
+    if(tokenOptionValue.value == 1){ 
+      
       let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , ContractsConfigs.contractABI, $signer)
       let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
       let receipt = await tx.wait()  
@@ -173,33 +182,22 @@
 
       console.log(receipt) 
     }
+      
+    } catch (error) { 
+      console.log(error) 
+      alert('CANT_FLOW')
+      
+    }
   }
 
   const claimFlowReward = async () => {  
 
       claim = true 
-      let gameData = await axios.post('http://localhost:5000/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
+      let gameData = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
       
-      console.log("gameID  :" , ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString())
+      
 
-      const contextLiChess = {
-        winner: $signerAddress, // winner 
-        experiencePoints: 10,
-        isImproved: true,
-        isBeatenGM: true,
-        flow_ENERGY: ContractsConfigs.flow_ENERGY,
-        id_ENERGY: ContractsConfigs.flowStates_ENERGY_BURN.hex,
-        flow_WIN: ContractsConfigs.flow_WIN ,
-        id_WIN: ContractsConfigs.flowStates_WIN.hex,
-        flow_XP: ContractsConfigs.flow_XP ,
-        id_XP: ContractsConfigs.flowStates_XP.hex,
-        flow_GM: ContractsConfigs.flow_GM ,
-        id_GM: ContractsConfigs.flowStates_GM.hex,
-        flow_IMPROVE: ContractsConfigs.flow_IMPROVE ,
-        id_IMPROVE: ContractsConfigs.flowStates_IMPROVE.hex ,
-        gameId: ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()
-      };   
-
+      
       claim = true 
       signedContext = gameData.data.data 
   }
@@ -214,9 +212,18 @@
   const verifyWallet = async () => {
     let sig = await $signer.signMessage("RAIN_LI_CHESS_ACCOUNT_VERFICATION")   
 
-    let verifyReq = await axios.post('http://localhost:5000/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
+    let verifyReq = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
     console.log(verifyReq.data) 
     walletVerified = true 
+  } 
+
+  const mintEnergy = async () => { 
+    let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI , $signer) 
+    let tx = await energyContract.flow( ContractsConfigs.flowStates_ENERGY_MINT.hex , 12323223, [] , {value : ethers.utils.parseEther('0')} ) 
+    let receipt = await tx.wait() 
+    console.log(receipt)
+
+
   }
 
 </script>
@@ -231,7 +238,8 @@
           <SectionBody>
             <div class="flex flex-col">          
               
-              <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+              <div class="self-start flex flex-row items-center gap-x-2 pt-4">  
+                <span class="uppercase font-semibold">Click On Verify Button to map wallet with liChess account</span>
                 <Button shrink  on:click={() =>{verifyWallet()}}> Verify Wallet </Button>
               
                 
@@ -247,7 +255,7 @@
             <SectionHeading>User Details</SectionHeading>
             <div class="p-3 pl-5">
               {#if !accDetails?.profile}
-                username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails ? accDetails?.username : "John Doe"}</a></span>
+                Username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails ? accDetails?.username : "John Doe"}</a></span>
               {:else}
                 Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{`${accDetails ? (accDetails?.profile?.firstName + " " + accDetails?.profile?.lastName) : "John Doe"}`}</a></span>
               {/if}
@@ -336,7 +344,33 @@
             </div>
               </div>
             </SectionBody>
-          </Section>
+          </Section>  
+
+          <Section>
+            <SectionHeading>
+              <div class="mb-2 flex flex-row w-full space-y-4"> 
+              <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+                <img src="/assets/EnergyToken.png" width='30' height='30' alt='twitter' class='me-4' />
+              </div>  
+              Claim Energy Token 
+              </div>
+            </SectionHeading>
+            {#if $signerAddress}
+            <SectionBody> 
+                <span class="text-gray-600">Click below to claim game energy</span>
+                <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+                  <Button shrink on:click={() =>{mintEnergy()}}> Claim Energy </Button>
+                  
+                </div>
+
+                
+              </SectionBody>
+            {:else}
+              <span class="p-4">Please Connect your wallet</span>
+            {/if}
+          </Section> 
+
+          
         {/if}
 
         <Section>
@@ -359,7 +393,7 @@
                 </div>
                 <div class="col-span-11">
                     <p>
-                      Based on your game id and registration, you can claim: Then we show the simulation for what they will game and the various flow expressions (even if they look totally shit)
+                      Based on your game id and registration, you can claim tokens !! 
  
                     </p>
                 </div>  
