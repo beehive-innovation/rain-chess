@@ -18,7 +18,6 @@
   import { params, push } from "svelte-spa-router";
   import Select from "$components/Select.svelte";
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
-  import {EmissionsERC20} from "rain-sdk" 
   import { ethers } from 'ethers';  
   import axios from 'axios'
 
@@ -29,13 +28,26 @@
 
   let fields: any = {};
 
-  let gameID = "";
-  let tknUnits = ""
-  let getPromise 
-  let accDetails
-  let signedContext
+  let gameID = "", accDetails, signedContext
+  let parserVmStateConfig: Writable<StateConfig> = writable(null)
+  let simulatedResult , deployPromise, claim = false
 
-  let claim = false
+  const Options = [
+    {value: 2, label: "Select UserType"},
+    { value: 0, label: "Verify Account" },
+    { value: 1, label: "Verify Game" },
+  ]
+  let option: { value: number; label: string } 
+
+  const tokenOption = [ 
+    {value: 0, label: "Select Token"},
+
+    {value: 1, label: "Win Token"},
+    { value: 2, label: "Experience Token" },
+    { value: 3, label: "GM Token" },
+    { value: 4, label: "Improve Token" }
+  ]
+  let tokenOptionValue: { value: number; label: string }
 
   $: if($signer){   
     const authorizeAccount = async () => { 
@@ -54,53 +66,34 @@
        alert(`${authResult.data.message}`)
 
     } 
-
-    authorizeAccount()
-  }
   
+    const getAccountData = async () =>{
 
-  $: if(oAuth) { 
-    const data = async () =>{
-
-      let tokenData = oAuth
+      let tokenData = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
+      
       let data = await axios.get('https://lichess.org/api/account',{
         headers: { 
-          'Authorization': `Bearer ${tokenData.accessToken.value}`
+          'Authorization': `Bearer ${tokenData?.accessToken?.value}`
         }
       })
-<<<<<<< HEAD
-      console.log("data",data);
-=======
->>>>>>> 52ed1cf (user details)
       accDetails = data.data
     }
+    authorizeAccount()
+    getAccountData()
+  }
+  // setTimeout(getAccountData, 3000);
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  $: if(urlParams.has('code')) { 
+    const data = async () =>{
+      window.history.pushState({}, null, '/');
+      push('/player')
+
+    }
     data()
-    
+
   } 
-
-  let parserVmStateConfig: Writable<StateConfig> = writable(null)
-
-
-  const Options = [
-    {value: 2, label: "Select UserType"},
-    { value: 0, label: "Verify Account" },
-    { value: 1, label: "Verify Game" },
-  ]
-  let option: { value: number; label: string } 
-
-  const tokenOption = [ 
-    {value: 0, label: "Select UserType"},
-
-    {value: 1, label: "Win Token"},
-    { value: 2, label: "Experience Token" },
-    { value: 3, label: "GM Token" },
-    { value: 4, label: "Improve Token" }
-  ]
-  let tokenOptionValue: { value: number; label: string }
-
-  let newEmissionsERC20
-  let simulatedResult 
-  let deployPromise
 
   $: if ($parserVmStateConfig && $signer) simulate()
 
@@ -157,8 +150,6 @@
       console.log(receipt) 
     }
   }
-  
-
 
   const claimFlowReward = async () => {  
 
@@ -211,68 +202,63 @@
       </SectionBody>
     </Section>
 
-    <Section>
-      <SectionHeading>User Details</SectionHeading>
-      <div class="p-3 pl-5">
-        {#if !accDetails?.profile}
-<<<<<<< HEAD
-          username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.username}</a></span>
-        {:else}
-          Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.profile?.firstName} {accDetails?.profile?.lastName}</a></span>
-=======
-          username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails?.username}</a></span>
-        {:else}
-          Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails?.profile?.firstName} {accDetails?.profile?.lastName}</a></span>
->>>>>>> 52ed1cf (user details)
-        {/if}
-      </div>
-      <SectionBody>
-        <div class="flex flex-row">
-          <div class="w-1/2">
-        <Item gap="gap-y-4">
-          <Label>Game Details: </Label>
-          <Info>
-            <span class="flex gap-x-4 ">
-              <img src="/assets/allGame.png" width='30' height='30' alt='all' class='me-4' /> All : {`${accDetails?.count.all}`}
-            </span>
-          </Info>
-          <Info>
-            <span class="flex gap-x-4 ">
-              <img src="/assets/win.png" width='30' height='30' alt='all' class='me-4' /> Win : {`${accDetails?.count.win}`}
-            </span>
-          </Info>
-          <Info>
-            <span class="flex gap-x-4 ">
-              <img src="/assets/drawn.png" width='30' height='30' alt='all' class='me-4' /> Draw : {`${accDetails?.count.draw}`}
-            </span>
-          </Info>
-          <Info>
-            <span class="flex gap-x-4 ">
-              <img src="/assets/loss.png" width='30' height='30' alt='all' class='me-4' /> Loss : {`${accDetails?.count.loss}`}
-            </span>
-            </Info>
-          <Info>
-            <span class="flex gap-x-4 ">
-              <img src="/assets/playing.png" width='30' height='30' alt='all' class='me-4' /> Playing : {`${accDetails?.count.playing}`}
-            </span>
-          </Info>
-        </Item>
-      </div>
-      <div class="w-1/2">
-        <Item>
-          <Label>Performance : </Label>
-          <Info></Info>
-        </Item>
-      </div>
+    {#if $signer}
+      <Section>
+        <SectionHeading>User Details</SectionHeading>
+        <div class="p-3 pl-5">
+          {#if !accDetails?.profile}
+            username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails ? accDetails?.username : "John Doe"}</a></span>
+          {:else}
+            Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{`${accDetails ? (accDetails?.profile?.firstName + " " + accDetails?.profile?.lastName) : "John Doe"}`}</a></span>
+          {/if}
         </div>
-      </SectionBody>
-    </Section>
+        <SectionBody>
+          <div class="flex flex-row">
+            <div class="w-1/2">
+          <Item gap="gap-y-4">
+            <Label>Game Details: </Label>
+            <Info>
+              <span class="flex gap-x-4 ">
+                <img src="/assets/allGame.png" width='30' height='30' alt='all' class='me-4' /> All : {`${accDetails ? accDetails?.count.all : 0}`}
+              </span>
+            </Info>
+            <Info>
+              <span class="flex gap-x-4 ">
+                <img src="/assets/win.png" width='30' height='30' alt='all' class='me-4' /> Win : {`${accDetails ? accDetails?.count.win : 0}`}
+              </span>
+            </Info>
+            <Info>
+              <span class="flex gap-x-4 ">
+                <img src="/assets/drawn.png" width='30' height='30' alt='all' class='me-4' /> Draw : {`${accDetails ? accDetails?.count.draw : 0}`}
+              </span>
+            </Info>
+            <Info>
+              <span class="flex gap-x-4 ">
+                <img src="/assets/loss.png" width='30' height='30' alt='all' class='me-4' /> Loss : {`${accDetails ? accDetails?.count.loss : 0}`}
+              </span>
+              </Info>
+            <Info>
+              <span class="flex gap-x-4 ">
+                <img src="/assets/playing.png" width='30' height='30' alt='all' class='me-4' /> Playing : {`${accDetails ? accDetails?.count.playing : 0}`}
+              </span>
+            </Info>
+          </Item>
+        </div>
+        <div class="w-1/2">
+          <Item>
+            <Label>Performance : </Label>
+            <Info></Info>
+          </Item>
+        </div>
+          </div>
+        </SectionBody>
+      </Section>
+    {/if}
 
     <Section>
       <SectionHeading>Verify (2)</SectionHeading>
       <SectionBody>
         <div class="mb-2 flex flex-col w-full space-y-4"> 
-
           <div class="grid grid-cols-12 items-center" >
             <div class="col-span-1 grid justify-center gap-y-4">
               <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
@@ -349,7 +335,7 @@
           <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
               <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
             {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
+              <span class="text-gray-600">Connect your wallet to deploy</span>
             {/if}
           </div>
         </div>
@@ -357,39 +343,25 @@
     </Section> 
 
     {#if claim} 
-
-    <Section>
-      <SectionHeading>Claim Rewarsds for game</SectionHeading>
-      <SectionBody>
-          <div class="max-w-prose">Claim Rewards</div>
-          <div class="grid grid-cols-2 gap-4">
-            
+      <Section>
+        <SectionHeading>Claim Rewards for game</SectionHeading>
+        <SectionBody>
+          <div class="flex flex-col">          
             <Select
               items={tokenOption}
               bind:value={tokenOptionValue}
             >
-              <span slot="label"> Select The Option: </span>
+              <span slot="label"> Select The Token to Claim Reward for: </span>
             </Select>
-            <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-              <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit(tokenOptionValue)}}> Submit </Button>
-            {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
-            {/if}
+            <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+              <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit()}}> Submit </Button>
+              {#if !$signer}
+              <span class="text-gray-600">Connect your wallet to deploy</span>
+              {/if}
+            </div>
           </div>
-          </div>
-
-          
-          <div id="express" style="display: none;">
-         
-          <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-              <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
-            {#if !$signer}
-            <span class="text-gray-600">Connect your wallet to deploy</span>
-            {/if}
-          </div>
-        </div>
-      </SectionBody>
-    </Section>
+        </SectionBody>
+      </Section>
     {/if}  
     
   </div>
