@@ -1,14 +1,8 @@
 <script>
   import WalletConnect from "../components/wallet-connect/WalletConnect.svelte";
-  import {auth } from '$src/stores'
-    import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
 
   $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
-
-  $ : if($auth){
-  console.log("test", $auth.me);
-  
-}
 
 </script>
 

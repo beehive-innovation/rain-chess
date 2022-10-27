@@ -1,39 +1,44 @@
 {
-    "network": "mumbai",
-    "integrity": "0xc0E221428C8d2c5D04a2f9549e47f9ce9d44d5BD",
-    "integrityBlock": 28766323,
-    "liChess": "0x1d7C10C36C39d39CBAC9F41150f4ba10945b58b6",
-    "liChessBlockNumber": 28766325,
-    "flowERC20Factory": "0x18BB5Dd7B20BCb999623c7745849D3ebebcb94A6",
-    "flowERC20FactoryBlockNumber": 28766329,
-    "flow_ENERGY": "0x923156Efd3D44DE323F754339a56A7598e22DD8B",
-    "flow_ENERGYBlockNumber": 28766331,
-    "flowStates_ENERGY": {
-      "type": "BigNumber",
-      "hex": "0x59f22ecf88bf62058717aef8993a0c2c0563a821da7555a520fdf437ab336123"
-    },
-    "flow_WIN": "0x10afbd74498cf44C5bdDeE20E5AcF8170CC0A11C",
-    "flow_WINBlockNumber": 28766337,
-    "flowStates_WIN": {
-      "type": "BigNumber",
-      "hex": "0x66659fb3dd4f890cfa48673f1da67530a717eb99ea7a8fd21852c96cbb0bc346"
-    },
-    "flow_GM": "0xFA21c76E0235650BCaE2C112B7265e764672B7D3",
-    "flow_GMBlockNumber": 28774645,
-    "flowStates_GM": {
-      "type": "BigNumber",
-      "hex": "0xa8ffef023b3801b13fd04840bea6e0ad1bfb0244f5fd75bf4ade004f9dc8aca3"
-    },
-    "flow_IMPROVE": "0xE1cEE9261c9C4c4609C1Fd0aFBD6ccb0d7BDe608",
-    "flow_IMPROVEBlockNumber": 28774645,
-    "flowStates_IMPROVE": {
-      "type": "BigNumber",
-      "hex": "0xfdbec239b7bcebae8b67d1aa22a39fb2da62bce4429ee1de3994aca68b0ce54f"
-    },
-    "flow_XP": "0xfAC0991A14bA57f27279200FFB0F39DAd5bf7f31",
-    "flow_XPBlockNumber": 28766339,
-    "flowStates_XP": {
-      "type": "BigNumber",
-      "hex": "0x208dcf5d3cbaa8f3e6e025e8c58bebdb51c03c9a6cdb8331869c37a061b345be"
-    }
+  
+  "network": "mumbai",
+  "integrity": "0xf79cE03D22C643eF8770a2D3856c9DBAf24153e0",
+  "integrityBlock": 28840015,
+  "flowERC20Factory": "0x1E29D4a3a516699EC06419555f24243f6B8BaA8E",
+  "flowERC20FactoryBlockNumber": 28840017,
+  "flow_ENERGY": "0xa697627052464C4a42042460163744b030Bd3bF1",
+  "flow_ENERGYBlockNumber": 28840020,
+  "flowStates_ENERGY_BURN": {
+    "type": "BigNumber",
+    "hex": "0x58e940b3248294734a62641b5cded16671be5f08c54c2ca2ec8b3663acdcd996"
+  },
+  "flowStates_ENERGY_MINT": {
+    "type": "BigNumber",
+    "hex": "0x8f5ddf69b37c288d3e8002862e4cd9aa5e1b320ff1824fb2076ec13e4866d1a2"
+  },
+  "flow_WIN": "0xb83a1251AB68A4AB71C7bdf5742d6cAD21975c17",
+  "flow_WINBlockNumber": 28840022,
+  "flowStates_WIN": {
+    "type": "BigNumber",
+    "hex": "0x66544901b217568f910976bfa63b31a29c48158695c5b45711cd517db4e8b6fc"
+  },
+  "flow_GM": "0x820d46D18934187f513f3bC8C6cb6f00e534bbB5",
+  "flow_GMBlockNumber": 28840024,
+  "flowStates_GM": {
+    "type": "BigNumber",
+    "hex": "0x4ede935f0077daff480f392b0e1ae2fa15ca24b20978b0f193e5937a8c602872"
+  },
+  "flow_IMPROVE": "0xBD60b58Cb4A24262d12fa0d25C8B9D9854ce72e9",
+  "flow_IMPROVEBlockNumber": 28840024,
+  "flowStates_IMPROVE": {
+    "type": "BigNumber",
+    "hex": "0x75929b2451ab836660257d7dc38b23c0c9fd79cfb18d80f5478b8f2392b3ec95"
+  },
+  "flow_XP": "0x3C935eCab6f1401894ccAEf4Ed2a1c9ddD2B5fd5",
+  "flow_XPBlockNumber": 28840024,
+  "flowStates_XP": {
+    "type": "BigNumber",
+    "hex": "0x05cc9b65826779859341d07b7e2c6640113ee8da088ed94c224e8bfa279ca375"
   }
+   ,
+  "contractABI": [{"inputs":[{"internalType":"address","name":"interpreterIntegrity_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"indexed":false,"internalType":"struct FlowERC20Config","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"flow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"internalType":"struct FlowERC20Config","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"previewFlow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+}

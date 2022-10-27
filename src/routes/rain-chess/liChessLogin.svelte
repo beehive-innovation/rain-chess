@@ -11,9 +11,7 @@
     console.log("show", show);
     
 
-const urlParams = new URLSearchParams(window.location.search);
-  console.log("Has data ? = ", urlParams.has('code'));
-  console.log("\nWOrld");   
+  const urlParams = new URLSearchParams(window.location.search);      
   
   function str2ab(str) {
   var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
@@ -40,7 +38,14 @@ const urlParams = new URLSearchParams(window.location.search);
         }])  
       console.log(verifySubmit)
      }
-    //  console.log("urlParams", window.location); 
+     let test = window.location.href
+     let splitTest = test.split('/')
+     splitTest.map((url) =>{
+        if(url.startsWith("?code")){
+          window.history.pushState({}, null, '/');
+        }
+     })
+     
      push('/player')
 
     } 
