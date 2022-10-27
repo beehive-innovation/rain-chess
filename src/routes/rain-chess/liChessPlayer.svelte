@@ -133,7 +133,7 @@
     if(option.value != 2) document.getElementById("express").style.display = "grid";
     else document.getElementById("express").style.display = "none";  
 
-    let claimResult = option.value == 1 ? await axios.post(`https://18d66c4b6c88.in.ngrok.io/api/v2/computeGame` ,{gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth?.accessToken?.value}) : undefined
+    let claimResult = option.value == 1 ? await axios.post(`https://api.raingames.xyz/api/v2/computeGame` , {gameId :gameID }) : undefined
     console.log(claimResult?.data)
 
     simulatedResult = claimResult != undefined ? `
@@ -191,11 +191,11 @@
   }
 
   const claimFlowReward = async () => {  
-      claim = true 
-      let gameData = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
-      claim = true 
-      signedContext = gameData.data.data 
-  }
+    claim = true 
+    let gameData = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
+    claim = true 
+    signedContext = gameData.data.data 
+}
 
   const handleClick = async () => { 
 

@@ -31,7 +31,7 @@
     chessFetched = true
 
     chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
-    console.log("data");
+
     
     chessTKNName = await chesssContract.name()
     chessTKNClaimBal = await chesssContract.balanceOf($signerAddress)
