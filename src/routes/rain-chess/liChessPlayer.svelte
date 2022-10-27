@@ -68,7 +68,10 @@
           'Authorization': `Bearer ${tokenData.accessToken.value}`
         }
       })
+<<<<<<< HEAD
       console.log("data",data);
+=======
+>>>>>>> 52ed1cf (user details)
       accDetails = data.data
     }
     data()
@@ -212,9 +215,15 @@
       <SectionHeading>User Details</SectionHeading>
       <div class="p-3 pl-5">
         {#if !accDetails?.profile}
+<<<<<<< HEAD
           username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.username}</a></span>
         {:else}
           Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.profile?.firstName} {accDetails?.profile?.lastName}</a></span>
+=======
+          username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails?.username}</a></span>
+        {:else}
+          Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>{accDetails?.profile?.firstName} {accDetails?.profile?.lastName}</a></span>
+>>>>>>> 52ed1cf (user details)
         {/if}
       </div>
       <SectionBody>
