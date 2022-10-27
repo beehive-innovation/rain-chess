@@ -75,14 +75,14 @@
        } catch (error) {
           console.log("error : " ,error) 
 
-          if(!error.response.data.status && error.response.data.code == 401){
-              alert(`${error.response.data.message}`)
+          if(!error?.response?.data?.status && error?.response?.data?.code == 401){
+              alert(`${error?.response?.data?.message}`)
             }
-            else if(!error.response.data.status && error.response.data.code == 404){ 
+            else if(!error?.response?.data?.status && error?.response?.data?.code == 404){ 
               walletVerified = false
-              alert(`${error.response.data.message}`)
+              alert(`${error?.response?.data?.message}`)
             }
-          console.log(error.response.data)
+          console.log(error?.response?.data)
 
        }
 
@@ -97,6 +97,8 @@
           'Authorization': `Bearer ${tokenData?.accessToken?.value}`
         }
       })
+      console.log("data", data);
+      
       accDetails = data.data
     }
     authorizeAccount()
@@ -143,29 +145,30 @@
   } 
 
   const handleTokenOptionSubmit = async () => { 
+    let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()
     if(tokenOptionValue.value == 1){
       let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , ContractsConfigs.contractABI, $signer)
-      let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
       let receipt = await tx.wait()  
       console.log(receipt)  
     }
     else if(tokenOptionValue.value == 2){
       let contractXP = new ethers.Contract(ContractsConfigs.flow_XP , ContractsConfigs.contractABI, $signer)
-      let tx = await contractXP.flow(ContractsConfigs.flowStates_XP.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let tx = await contractXP.flow(ContractsConfigs.flowStates_XP.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
       let receipt = await tx.wait()  
 
       console.log(receipt) 
     }
     else if(tokenOptionValue.value == 3){
       let contractGM = new ethers.Contract(ContractsConfigs.flow_GM , ContractsConfigs.contractABI, $signer)
-      let tx = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let tx = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
       let receipt = await tx.wait()  
 
       console.log(receipt) 
     }
     else if(tokenOptionValue.value == 4){
       let contractImprove = new ethers.Contract(ContractsConfigs.flow_IMPROVE , ContractsConfigs.contractABI, $signer)
-      let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
       let receipt = await tx.wait()  
 
       console.log(receipt) 
@@ -221,15 +224,6 @@
 <div class="flex gap-x-3 relative">
   <div class="flex w-2/3 flex-col gap-y-6 p-8">
     <span class="text-3xl font-semibold">liChess Player</span>
-    
-    <Section>
-      <SectionHeading>Game</SectionHeading>
-      <SectionBody>
-        <Item>
-          <span class="text-xl font-medium max-w-prose">Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a>, register account and play a game </span> 
-        </Item>
-      </SectionBody>
-    </Section> 
 
     {#if !walletVerified} 
         <Section>
@@ -262,30 +256,30 @@
               <div class="flex flex-row">
                 <div class="w-1/2">
               <Item gap="gap-y-4">
-                <Label>Game Details: </Label>
+                <Label>Games Details: </Label>
                 <Info>
                   <span class="flex gap-x-4 ">
-                    <img src="/assets/allGame.png" width='30' height='30' alt='all' class='me-4' /> All : {`${accDetails ? accDetails?.count.all : 0}`}
+                    <img src="/assets/allGame.png" width='30' height='30' alt='all' class='me-4' /> Total games : {`${accDetails ? accDetails?.count.all : 0}`}
                   </span>
                 </Info>
                 <Info>
                   <span class="flex gap-x-4 ">
-                    <img src="/assets/win.png" width='30' height='30' alt='all' class='me-4' /> Win : {`${accDetails ? accDetails?.count.win : 0}`}
+                    <img src="/assets/win.png" width='30' height='30' alt='all' class='me-4' /> Win games : {`${accDetails ? accDetails?.count.win : 0}`}
                   </span>
                 </Info>
                 <Info>
                   <span class="flex gap-x-4 ">
-                    <img src="/assets/drawn.png" width='30' height='30' alt='all' class='me-4' /> Draw : {`${accDetails ? accDetails?.count.draw : 0}`}
+                    <img src="/assets/drawn.png" width='30' height='30' alt='all' class='me-4' /> Draw games : {`${accDetails ? accDetails?.count.draw : 0}`}
                   </span>
                 </Info>
                 <Info>
                   <span class="flex gap-x-4 ">
-                    <img src="/assets/loss.png" width='30' height='30' alt='all' class='me-4' /> Loss : {`${accDetails ? accDetails?.count.loss : 0}`}
+                    <img src="/assets/loss.png" width='30' height='30' alt='all' class='me-4' /> Loss games : {`${accDetails ? accDetails?.count.loss : 0}`}
                   </span>
                   </Info>
                 <Info>
                   <span class="flex gap-x-4 ">
-                    <img src="/assets/playing.png" width='30' height='30' alt='all' class='me-4' /> Playing : {`${accDetails ? accDetails?.count.playing : 0}`}
+                    <img src="/assets/playing.png" width='30' height='30' alt='all' class='me-4' /> Playing games : {`${accDetails ? accDetails?.count.playing : 0}`}
                   </span>
                 </Info>
               </Item>
@@ -293,7 +287,51 @@
             <div class="w-1/2">
               <Item>
                 <Label>Performance : </Label>
-                <Info></Info>
+                <div class="flex py-4">
+                  <div class="flex w-1/2 gap-x-4">
+                    <img src="/assets/bullet.png" width='35' height='35' alt='all' class='me-4' />
+                    <div class="flex flex-col">
+                      <div>BULLET</div>
+                      <div>{`${accDetails ? accDetails?.perfs?.bullet?.games : 0} games`}</div>
+                    </div>
+                  </div>
+
+                  <div class="flex w-1/2 gap-x-4">
+                    <img src="/assets/blitz.png" width='40' height='26' alt='all' class='me-4' />
+                    <div class="flex flex-col">
+                      <div>BLITZ</div>
+                      <div>{`${accDetails ? accDetails?.perfs?.blitz?.games : 0} games`}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex py-4">
+                  <div class="flex w-1/2 gap-x-4">
+                    <img src="/assets/rapid.png" width='35' height='35' alt='all' class='me-4' />
+                    <div class="flex flex-col">
+                      <div>RAPID</div>
+                      <div>{`${accDetails ? accDetails?.perfs?.rapid?.games : 0} games`}</div>
+                    </div>
+                  </div>
+
+                  <div class="flex w-1/2 gap-x-4">
+                    <img src="/assets/classical.png" width='35' height='35' alt='all' class='me-4' />
+                    <div class="flex flex-col">
+                      <div>CLASSICAL</div>
+                      <div>{`${accDetails ? accDetails?.perfs?.classical?.games : 0} games`}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex py-4">
+                  <div class="flex w-1/2 gap-x-4">
+                    <img src="/assets/correspondence.png" width='35' height='35' alt='all' class='me-4' />
+                    <div class="flex flex-col">
+                      <div>CORRESPONDENCE</div>
+                      <div>{`${accDetails ? accDetails?.perfs?.correspondence?.games : 0} games`}</div>
+                    </div>
+                  </div>
+                </div>
               </Item>
             </div>
               </div>
@@ -302,7 +340,7 @@
         {/if}
 
         <Section>
-          <SectionHeading>Verify (2)</SectionHeading>
+          <SectionHeading>Play</SectionHeading>
           <SectionBody>
             <div class="mb-2 flex flex-col w-full space-y-4"> 
               <div class="grid grid-cols-12 items-center" >
@@ -311,7 +349,7 @@
                 </div>
                 <div class="col-span-11">
                     <p>
-                      Login through LiChess Account , Connect your wallet and submit verification 
+                      Play a game on lichess and paste the game ID only into the input form below to verify for game.
                     </p>
                 </div>
               </div>
@@ -321,8 +359,8 @@
                 </div>
                 <div class="col-span-11">
                     <p>
-                      Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a> and participate in games, tournaments, streams . 
-                      Copy-paste the game Id to claim tokens. 
+                      Based on your game id and registration, you can claim: Then we show the simulation for what they will game and the various flow expressions (even if they look totally shit)
+ 
                     </p>
                 </div>  
               </div>
