@@ -52,6 +52,10 @@
     data()
   } 
 
+  $: if(localStorage.getItem('oauth2authcodepkce-state')){
+    push('/player')
+  }
+
   const loginWithLichess = async () => { 
 
 console.log("auth", $auth);
