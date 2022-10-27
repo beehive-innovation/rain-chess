@@ -25,8 +25,6 @@
   import ContractsConfigs from "../../../mumbai.json"
 
   $: oAuth = JSON.parse(localStorage.getItem('oauth2authcodepkce-state'))
-
-  import  { Auth } from "$src/test";
   const { open } = getContext('simple-modal') 
 
   let fields: any = {};
@@ -34,13 +32,12 @@
   let gameID = "";
   let tknUnits = ""
   let getPromise 
+  let accDetails
   let signedContext
 
   let claim = false
 
   $: if($signer){   
-
-
     const authorizeAccount = async () => { 
 
        let authToken = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
@@ -48,7 +45,7 @@
        console.log('authToken : ' , authToken.accessToken.value) 
        oAuth = authToken
 
-       let authResult = await axios.post('http://localhost:5000/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken.accessToken.value})  
+       let authResult = await axios.post('http://localhost:5000/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
        console.log('authResult : ' , authResult )
        if(!authResult.data.status){
         alert(`${authResult.data.message}`)
@@ -59,47 +56,23 @@
     } 
 
     authorizeAccount()
-
-   
-   
   }
-
-  const urlParams = new URLSearchParams(window.location.search);
-
-  $: if(urlParams.has('code')) { 
- 
-    //  if($auth.me && $signer){
-
-    //    let verifyContract = new Verify('0xb8c01dee6a0f920d51ea137d4908f65b13c41bc1' , $signer)  
-       
-    //    let encoder = new TextEncoder()
   
-    //     let verifySubmit = await verifyContract.approve([{
-    //       account : $signerAddress , data : str2ab($auth.me.id)
-    //     }])  
-    //   console.log(verifySubmit)
-    //  }
 
+  $: if(oAuth) { 
     const data = async () =>{
-      let authToken = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
-      console.log('authToken : ', authToken )
-      
-      
-      window.history.pushState({}, null, '/');
-      push('/player')
 
-      let accData = await axios.get("https://lichess.org/api/account", {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken.accessToken.value}`
-                },
-            })
-
-      console.log("acc", accData);
-      
+      let tokenData = oAuth
+      let data = await axios.get('https://lichess.org/api/account',{
+        headers: { 
+          'Authorization': `Bearer ${tokenData.accessToken.value}`
+        }
+      })
+      console.log("data",data);
+      accDetails = data.data
     }
     data()
-
+    
   } 
 
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
@@ -141,7 +114,7 @@
     if(option.value != 2) document.getElementById("express").style.display = "grid";
     else document.getElementById("express").style.display = "none";  
 
-    let claimResult = option.value == 1 ? await axios.post(`http://localhost:5000/api/v2/computeGame` ,{gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) : undefined
+    let claimResult = option.value == 1 ? await axios.post(`http://localhost:5000/api/v2/computeGame` ,{gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth?.accessToken?.value}) : undefined
     console.log(claimResult?.data)
 
     simulatedResult = claimResult != undefined ? `
@@ -152,39 +125,41 @@
     ` : "Please select Verify Game"
   } 
 
-  const handleTokenOptionSubmit = async () => {
-    // console.log("gameId : " , gameId)  
-    console.log("tokenOptionValue : " , tokenOptionValue)  
-    console.log("signedContext : " , signedContext)  
+  const handleTokenOptionSubmit = async () => { 
+    if(tokenOptionValue.value == 1){
+      let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , ContractsConfigs.contractABI, $signer)
+      let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let receipt = await tx.wait()  
+      console.log(receipt)  
+    }
+    else if(tokenOptionValue.value == 2){
+      let contractXP = new ethers.Contract(ContractsConfigs.flow_XP , ContractsConfigs.contractABI, $signer)
+      let tx = await contractXP.flow(ContractsConfigs.flowStates_XP.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let receipt = await tx.wait()  
 
-    
+      console.log(receipt) 
+    }
+    else if(tokenOptionValue.value == 3){
+      let contractGM = new ethers.Contract(ContractsConfigs.flow_GM , ContractsConfigs.contractABI, $signer)
+      let tx = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let receipt = await tx.wait()  
 
-    // let contract = new ethers.Contract(ContractsConfigs.flow_ENERGY , [{"inputs":[{"internalType":"address","name":"interpreterIntegrity_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"indexed":false,"internalType":"struct FlowERC20Config","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"flow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"internalType":"struct FlowERC20Config","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"previewFlow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]  , $signer)
-    // let tx = await contract.flow(ContractsConfigs.flowStates_ENERGY_BURN.hex , 12341234 , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
-    // let receipt = await tx.wait() 
-    // console.log(receipt) 
+      console.log(receipt) 
+    }
+    else if(tokenOptionValue.value == 4){
+      let contractImprove = new ethers.Contract(ContractsConfigs.flow_IMPROVE , ContractsConfigs.contractABI, $signer)
+      let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE.hex , gameID , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+      let receipt = await tx.wait()  
 
-    let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , [{"inputs":[{"internalType":"address","name":"interpreterIntegrity_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"indexed":false,"internalType":"struct FlowERC20Config","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"flow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"internalType":"struct FlowERC20Config","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"previewFlow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]  , $signer)
-    let tx2 = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , 1234123411 , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
-    let receipt2 = await tx2.wait()  
-
-    console.log(receipt2)  
-
-    let contractGM = new ethers.Contract(ContractsConfigs.flow_GM , [{"inputs":[{"internalType":"address","name":"interpreterIntegrity_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_size","type":"uint256"},{"internalType":"uint256","name":"_start","type":"uint256"},{"internalType":"uint256","name":"_end","type":"uint256"}],"name":"InvalidCodeAtRange","type":"error"},{"inputs":[],"name":"WriteError","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"indexed":false,"internalType":"struct FlowERC20Config","name":"config","type":"tuple"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"indexed":false,"internalType":"struct StateConfig","name":"config","type":"tuple"}],"name":"SaveInterpreterState","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"flow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig","name":"interpreterStateConfig","type":"tuple"},{"components":[{"internalType":"bytes[]","name":"sources","type":"bytes[]"},{"internalType":"uint256[]","name":"constants","type":"uint256[]"}],"internalType":"struct StateConfig[]","name":"flows","type":"tuple[]"}],"internalType":"struct FlowERC20Config","name":"config_","type":"tuple"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"flow_","type":"uint256"},{"internalType":"uint256","name":"id_","type":"uint256"},{"components":[{"internalType":"address","name":"signer","type":"address"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint256[]","name":"context","type":"uint256[]"}],"internalType":"struct SignedContext[]","name":"signedContexts_","type":"tuple[]"}],"name":"previewFlow","outputs":[{"components":[{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"mints","type":"tuple[]"},{"components":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20SupplyChange[]","name":"burns","type":"tuple[]"},{"components":[{"components":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct NativeTransfer[]","name":"native","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC20Transfer[]","name":"erc20","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"internalType":"struct ERC721Transfer[]","name":"erc721","type":"tuple[]"},{"components":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"internalType":"struct ERC1155Transfer[]","name":"erc1155","type":"tuple[]"}],"internalType":"struct FlowTransfer","name":"flow","type":"tuple"}],"internalType":"struct FlowERC20IO","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"storageOpcodesRange","outputs":[{"components":[{"internalType":"uint256","name":"pointer","type":"uint256"},{"internalType":"uint256","name":"length","type":"uint256"}],"internalType":"struct StorageOpcodesRange","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]  , $signer)
-    let tx3 = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , 1234123411 , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
-    let receipt3 = await tx3.wait()  
-
-    console.log(receipt3) 
-
-
-
+      console.log(receipt) 
+    }
   }
   
 
 
   const claimFlowReward = async () => {  
 
-     
+      claim = true 
       let gameData = await axios.post('http://localhost:5000/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
       
       console.log("gameID  :" , ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString())
@@ -209,11 +184,6 @@
 
       claim = true 
       signedContext = gameData.data.data 
-     
-      
-      // let tx = await lichessContract.claimReward(contextLiChess, "0x00", [gameData.data.data]) 
-      // let res =await  tx.wait() 
-      // console.log(res)
   }
 
   const handleClick = async () => { 
@@ -235,6 +205,57 @@
         <Item>
           <span class="text-xl font-medium max-w-prose">Go to <a target='_blank' class="text-blue-400 underline" href="https://lichess.org/">lichess</a>, register account and play a game </span> 
         </Item>
+      </SectionBody>
+    </Section>
+
+    <Section>
+      <SectionHeading>User Details</SectionHeading>
+      <div class="p-3 pl-5">
+        {#if !accDetails?.profile}
+          username : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.username}</a></span>
+        {:else}
+          Name : <span class="uppercase font-semibold"><a target='_blank' class="text-blue-400 underline" href={accDetails?.url}>  {accDetails?.profile?.firstName} {accDetails?.profile?.lastName}</a></span>
+        {/if}
+      </div>
+      <SectionBody>
+        <div class="flex flex-row">
+          <div class="w-1/2">
+        <Item gap="gap-y-4">
+          <Label>Game Details: </Label>
+          <Info>
+            <span class="flex gap-x-4 ">
+              <img src="/assets/allGame.png" width='30' height='30' alt='all' class='me-4' /> All : {`${accDetails?.count.all}`}
+            </span>
+          </Info>
+          <Info>
+            <span class="flex gap-x-4 ">
+              <img src="/assets/win.png" width='30' height='30' alt='all' class='me-4' /> Win : {`${accDetails?.count.win}`}
+            </span>
+          </Info>
+          <Info>
+            <span class="flex gap-x-4 ">
+              <img src="/assets/drawn.png" width='30' height='30' alt='all' class='me-4' /> Draw : {`${accDetails?.count.draw}`}
+            </span>
+          </Info>
+          <Info>
+            <span class="flex gap-x-4 ">
+              <img src="/assets/loss.png" width='30' height='30' alt='all' class='me-4' /> Loss : {`${accDetails?.count.loss}`}
+            </span>
+            </Info>
+          <Info>
+            <span class="flex gap-x-4 ">
+              <img src="/assets/playing.png" width='30' height='30' alt='all' class='me-4' /> Playing : {`${accDetails?.count.playing}`}
+            </span>
+          </Info>
+        </Item>
+      </div>
+      <div class="w-1/2">
+        <Item>
+          <Label>Performance : </Label>
+          <Info></Info>
+        </Item>
+      </div>
+        </div>
       </SectionBody>
     </Section>
 
@@ -329,20 +350,23 @@
     {#if claim} 
 
     <Section>
-      <SectionHeading>Cliam Rewarsds for game</SectionHeading>
+      <SectionHeading>Claim Rewarsds for game</SectionHeading>
       <SectionBody>
-        
-       
           <div class="max-w-prose">Claim Rewards</div>
           <div class="grid grid-cols-2 gap-4">
             
             <Select
               items={tokenOption}
               bind:value={tokenOptionValue}
-              on:change={handleTokenOptionSubmit}
             >
               <span slot="label"> Select The Option: </span>
             </Select>
+            <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
+              <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit(tokenOptionValue)}}> Submit </Button>
+            {#if !$signer}
+            <span class="text-gray-600">Connect your wallet to deploy</span>
+            {/if}
+          </div>
           </div>
 
           
