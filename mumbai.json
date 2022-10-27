@@ -1,39 +1,41 @@
 {
-    "network": "mumbai",
-    "integrity": "0xc0E221428C8d2c5D04a2f9549e47f9ce9d44d5BD",
-    "integrityBlock": 28766323,
-    "liChess": "0x1d7C10C36C39d39CBAC9F41150f4ba10945b58b6",
-    "liChessBlockNumber": 28766325,
-    "flowERC20Factory": "0x18BB5Dd7B20BCb999623c7745849D3ebebcb94A6",
-    "flowERC20FactoryBlockNumber": 28766329,
-    "flow_ENERGY": "0x923156Efd3D44DE323F754339a56A7598e22DD8B",
-    "flow_ENERGYBlockNumber": 28766331,
-    "flowStates_ENERGY": {
-      "type": "BigNumber",
-      "hex": "0x59f22ecf88bf62058717aef8993a0c2c0563a821da7555a520fdf437ab336123"
-    },
-    "flow_WIN": "0x10afbd74498cf44C5bdDeE20E5AcF8170CC0A11C",
-    "flow_WINBlockNumber": 28766337,
-    "flowStates_WIN": {
-      "type": "BigNumber",
-      "hex": "0x66659fb3dd4f890cfa48673f1da67530a717eb99ea7a8fd21852c96cbb0bc346"
-    },
-    "flow_GM": "0xFA21c76E0235650BCaE2C112B7265e764672B7D3",
-    "flow_GMBlockNumber": 28774645,
-    "flowStates_GM": {
-      "type": "BigNumber",
-      "hex": "0xa8ffef023b3801b13fd04840bea6e0ad1bfb0244f5fd75bf4ade004f9dc8aca3"
-    },
-    "flow_IMPROVE": "0xE1cEE9261c9C4c4609C1Fd0aFBD6ccb0d7BDe608",
-    "flow_IMPROVEBlockNumber": 28774645,
-    "flowStates_IMPROVE": {
-      "type": "BigNumber",
-      "hex": "0xfdbec239b7bcebae8b67d1aa22a39fb2da62bce4429ee1de3994aca68b0ce54f"
-    },
-    "flow_XP": "0xfAC0991A14bA57f27279200FFB0F39DAd5bf7f31",
-    "flow_XPBlockNumber": 28766339,
-    "flowStates_XP": {
-      "type": "BigNumber",
-      "hex": "0x208dcf5d3cbaa8f3e6e025e8c58bebdb51c03c9a6cdb8331869c37a061b345be"
-    }
+  "network": "mumbai",
+  "integrity": "0x3157777538047e68203302FB68aCB47D355b05C0",
+  "integrityBlock": 28825745,
+  "flowERC20Factory": "0x96b35b0ad2fd3649345cB6E568e7e348E9b2BBaD",
+  "flowERC20FactoryBlockNumber": 28825745,
+  "flow_ENERGY": "0xAB12Fe52Ed7cDaB9c3A458565a54D28781EDdB1A",
+  "flow_ENERGYBlockNumber": 28825748,
+  "flowStates_ENERGY_BURN": {
+    "type": "BigNumber",
+    "hex": "0x59f22ecf88bf62058717aef8993a0c2c0563a821da7555a520fdf437ab336123"
+  },
+  "flowStates_ENERGY_MINT": {
+    "type": "BigNumber",
+    "hex": "0x8ca0c58d85c37384aff8392b12def0f318387b24e3fa0c5a08b3dcdd5af52636"
+  },
+  "flow_WIN": "0x48a45c14e02672E4c43cFF58CDfA0355B7cf4eeB",
+  "flow_WINBlockNumber": 28825750,
+  "flowStates_WIN": {
+    "type": "BigNumber",
+    "hex": "0x2c36c98c3af797f0872d7e090825b83e528ec28c0e23f2df93c63ef6501b9fc5"
+  },
+  "flow_GM": "0x594070fa3C60e30057E73390b0dfC734aeA92DD5",
+  "flow_GMBlockNumber": 28825752,
+  "flowStates_GM": {
+    "type": "BigNumber",
+    "hex": "0xdce8bf6d6c3add313d2e35962c2cb405ca473bfb39601efc02ccc31eab5b5140"
+  },
+  "flow_IMPROVE": "0xce17FD5c1E6070470dF2485002395AB8dB3A9031",
+  "flow_IMPROVEBlockNumber": 28825752,
+  "flowStates_IMPROVE": {
+    "type": "BigNumber",
+    "hex": "0xd7be76afb1b8a5e7fcb7cc5a6a37e8d76741efbe12e799f126949108161be4e3"
+  },
+  "flow_XP": "0x47920ED606A7492c5a637AD3F51F521EbF39708c",
+  "flow_XPBlockNumber": 28825752,
+  "flowStates_XP": {
+    "type": "BigNumber",
+    "hex": "0x6ef9222f0d8d4876b51448ed113cc91aa0f2de860ffedd642c945004b2e32bbe"
   }
+}
