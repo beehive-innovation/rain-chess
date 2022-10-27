@@ -13,10 +13,11 @@
   import Select from '$components/Select.svelte';
   import Input from '$components/Input.svelte';
   import Button from '$components/Button.svelte';
-  import { formatUnits } from 'ethers/lib/utils';
+  import { formatUnits, getContractAddress } from 'ethers/lib/utils';
+    import IconLibrary from '$components/IconLibrary.svelte';
 
   let fields: any = {};
-  let tknUnits
+  let contractFetched
 
   let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
   let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;  
@@ -26,42 +27,75 @@
 
 
 
-  const getContract = async () =>{
+  const getChessContract = async () =>{
+    contractFetched = true
+
     chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
-    console.log("chesssContract", chesssContract);
     chessTKNName = await chesssContract.name()
     chessTKNClaimBal = await chesssContract.balanceOf($signerAddress)
     chessTKNSymbol = await chesssContract.symbol()
     chessTKNDecimals = await chesssContract.decimals() 
-
+    
+    contractFetched = false
+  }
+  const getEnergyContract = async () =>{
+    contractFetched = true
+    
     energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
     energyTKNClaimBal =  await energyContract.balanceOf($signerAddress)
     energyTKNName = await energyContract.name()
     energyTKNSymbol = await energyContract.symbol()
-    energyTKNDecimals = await energyContract.decimals()  
+    energyTKNDecimals = await energyContract.decimals() 
+    
+    contractFetched = false 
+  }
+  const getGMContract = async () =>{
+    contractFetched = true
 
     GMContract = ethers.utils.isAddress(EmissionContracts.GMContract || "") ? new EmissionsERC20(EmissionContracts.GMContract, $signer): null;
     GMTKNClaimBal =  await GMContract.balanceOf($signerAddress)
     GMTKNName = await GMContract.name()
     GMTKNSymbol = await GMContract.symbol()
     GMTKNDecimals = await GMContract.decimals()
-   
+    
+    contractFetched = false
+  }
+  const getImproveContract = async () =>{
+    contractFetched = true
+
     ImproveContract = ethers.utils.isAddress(EmissionContracts.ImproveContract || "") ? new EmissionsERC20(EmissionContracts.ImproveContract, $signer): null;
     ImproveClaimBal =  await ImproveContract.balanceOf($signerAddress)
     ImproveName = await ImproveContract.name()
     ImproveSymbol = await ImproveContract.symbol()
     ImproveDecimals = await ImproveContract.decimals()
+
+    contractFetched = false
+  }
+  const getXPContract = async () =>{
+    contractFetched = true
     
     XPContract = ethers.utils.isAddress(EmissionContracts.XPContract || "") ? new EmissionsERC20(EmissionContracts.XPContract, $signer): null;
     XPClaimBal =  await XPContract.balanceOf($signerAddress)
     XPName = await XPContract.name()
     XPSymbol = await XPContract.symbol()
     XPDecimals = await XPContract.decimals()
+    
+    contractFetched = false
   }
 
   $: if($signerAddress && EmissionContracts) {
-      getContract()
+      getChessContract()
+      getEnergyContract()
+      getGMContract()
+      getImproveContract()
+      getXPContract()
     }
+
+    // const getContracts = () =>{
+      
+
+    //   contractFetched = true
+    // }
 
   const tknOptions = [
     {value: 2, label: "Select Token Type"},
@@ -109,9 +143,14 @@
             <Label>Claimable Balance :</Label>
             <Info>
               {#if chessTKNClaimBal && chessTKNDecimals && chessTKNSymbol}
-                
-              {formatUnits(chessTKNClaimBal, chessTKNDecimals)}
-              {chessTKNSymbol}
+                {formatUnits(chessTKNClaimBal, chessTKNDecimals)}
+                {chessTKNSymbol}
+                <!--  -->
+                <span
+                class:animate-spin={contractFetched}
+                class="flex flex-col justify-center"
+                on:click={getChessContract}><IconLibrary icon="reload" /></span
+              >
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
@@ -147,6 +186,11 @@
                 
               {formatUnits(energyTKNClaimBal, energyTKNDecimals)}
               {energyTKNSymbol}
+              <span
+              class:animate-spin={contractFetched}
+                class="flex flex-col justify-center"
+                on:click={getEnergyContract}><IconLibrary icon="reload" /></span
+              >
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
@@ -182,6 +226,11 @@
                 
               {formatUnits(GMTKNClaimBal, GMTKNDecimals)}
               {GMTKNSymbol}
+              <span
+              class:animate-spin={contractFetched}
+                class="flex flex-col justify-center"
+                on:click={getGMContract}><IconLibrary icon="reload" /></span
+              >
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
@@ -218,6 +267,11 @@
                 
               {formatUnits(ImproveClaimBal, ImproveDecimals)}
               {ImproveSymbol}
+              <span
+              class:animate-spin={contractFetched}
+                class="flex flex-col justify-center"
+                on:click={getImproveContract}><IconLibrary icon="reload" /></span
+              >
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
@@ -254,6 +308,11 @@
                 
               {formatUnits(XPClaimBal, XPDecimals)}
               {XPSymbol}
+              <span
+              class:animate-spin={contractFetched}
+                class="flex flex-col justify-center"
+                on:click={getXPContract}><IconLibrary icon="reload" /></span
+              >
               {/if}
               <!-- {walletBalance && decimals ? ethers.utils.formatUnits(walletBalance, decimals) : ""} Chess TKN -->
             </Info>
