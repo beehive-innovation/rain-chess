@@ -191,13 +191,8 @@
   }
 
   const claimFlowReward = async () => {  
-
       claim = true 
       let gameData = await axios.post('https://18d66c4b6c88.in.ngrok.io/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
-      
-      
-
-      
       claim = true 
       signedContext = gameData.data.data 
   }
