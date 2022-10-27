@@ -17,7 +17,7 @@
     import IconLibrary from '$components/IconLibrary.svelte';
 
   let fields: any = {};
-  let contractFetched
+  let chessFetched, XPFetched, improveFetched, energyFetched, GMFetched
 
   let chessTKNClaimBal, chessTKNDecimals, chessTKNSymbol, chesssContract, chessTKNName; 
   let energyTKNClaimBal , energyTKNDecimals, energyTKNSymbol, energyContract, energyTKNName;  
@@ -28,18 +28,20 @@
 
 
   const getChessContract = async () =>{
-    contractFetched = true
+    chessFetched = true
 
     chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
+    console.log("data");
+    
     chessTKNName = await chesssContract.name()
     chessTKNClaimBal = await chesssContract.balanceOf($signerAddress)
     chessTKNSymbol = await chesssContract.symbol()
     chessTKNDecimals = await chesssContract.decimals() 
     
-    contractFetched = false
+    chessFetched = false
   }
   const getEnergyContract = async () =>{
-    contractFetched = true
+    energyFetched = true
     
     energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
     energyTKNClaimBal =  await energyContract.balanceOf($signerAddress)
@@ -47,10 +49,10 @@
     energyTKNSymbol = await energyContract.symbol()
     energyTKNDecimals = await energyContract.decimals() 
     
-    contractFetched = false 
+    energyFetched = false 
   }
   const getGMContract = async () =>{
-    contractFetched = true
+    GMFetched = true
 
     GMContract = ethers.utils.isAddress(EmissionContracts.GMContract || "") ? new EmissionsERC20(EmissionContracts.GMContract, $signer): null;
     GMTKNClaimBal =  await GMContract.balanceOf($signerAddress)
@@ -58,10 +60,10 @@
     GMTKNSymbol = await GMContract.symbol()
     GMTKNDecimals = await GMContract.decimals()
     
-    contractFetched = false
+    GMFetched = false
   }
   const getImproveContract = async () =>{
-    contractFetched = true
+    improveFetched = true
 
     ImproveContract = ethers.utils.isAddress(EmissionContracts.ImproveContract || "") ? new EmissionsERC20(EmissionContracts.ImproveContract, $signer): null;
     ImproveClaimBal =  await ImproveContract.balanceOf($signerAddress)
@@ -69,10 +71,10 @@
     ImproveSymbol = await ImproveContract.symbol()
     ImproveDecimals = await ImproveContract.decimals()
 
-    contractFetched = false
+    improveFetched = false
   }
   const getXPContract = async () =>{
-    contractFetched = true
+   XPFetched = true
     
     XPContract = ethers.utils.isAddress(EmissionContracts.XPContract || "") ? new EmissionsERC20(EmissionContracts.XPContract, $signer): null;
     XPClaimBal =  await XPContract.balanceOf($signerAddress)
@@ -80,7 +82,7 @@
     XPSymbol = await XPContract.symbol()
     XPDecimals = await XPContract.decimals()
     
-    contractFetched = false
+    XPFetched = false
   }
 
   $: if($signerAddress && EmissionContracts) {
@@ -147,8 +149,8 @@
                 {chessTKNSymbol}
                 <!--  -->
                 <span
-                class:animate-spin={contractFetched}
-                class="flex flex-col justify-center"
+                class:animate-spin={chessFetched}
+                class="contents flex-col justify-center"
                 on:click={getChessContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -187,8 +189,8 @@
               {formatUnits(energyTKNClaimBal, energyTKNDecimals)}
               {energyTKNSymbol}
               <span
-              class:animate-spin={contractFetched}
-                class="flex flex-col justify-center"
+              class:animate-spin={energyFetched}
+                class="contents flex-col justify-center"
                 on:click={getEnergyContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -227,8 +229,8 @@
               {formatUnits(GMTKNClaimBal, GMTKNDecimals)}
               {GMTKNSymbol}
               <span
-              class:animate-spin={contractFetched}
-                class="flex flex-col justify-center"
+              class:animate-spin={GMFetched}
+                class="contents flex-col justify-center"
                 on:click={getGMContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -268,8 +270,8 @@
               {formatUnits(ImproveClaimBal, ImproveDecimals)}
               {ImproveSymbol}
               <span
-              class:animate-spin={contractFetched}
-                class="flex flex-col justify-center"
+              class:animate-spin={improveFetched}
+                class="contents flex-col justify-center"
                 on:click={getImproveContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -309,8 +311,8 @@
               {formatUnits(XPClaimBal, XPDecimals)}
               {XPSymbol}
               <span
-              class:animate-spin={contractFetched}
-                class="flex flex-col justify-center"
+              class:animate-spin={XPFetched}
+                class="contents flex-col justify-center"
                 on:click={getXPContract}><IconLibrary icon="reload" /></span
               >
               {/if}
