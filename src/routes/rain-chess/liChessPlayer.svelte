@@ -22,6 +22,7 @@
   import axios from 'axios'
 
   import ContractsConfigs from "../../../mumbai.json"
+  import { Confetti } from "svelte-confetti"
 
   $: oAuth = JSON.parse(localStorage.getItem('oauth2authcodepkce-state'))
   const { open } = getContext('simple-modal') 
@@ -34,6 +35,7 @@
 
   let walletVerified = true, isWalletCorrect = false
   // isClaimRes = true
+  
   
 
   const Options = [
@@ -52,6 +54,9 @@
     { value: 4, label: "Improve Token" }
   ]
   let tokenOptionValue: { value: number; label: string }
+  
+  // Confetti 
+  let confetti = false;
 
   $: if($signer){   
     const authorizeAccount = async () => { 
@@ -199,6 +204,10 @@
     const { validationResult } = await validateFields(fields);
     if (!validationResult) return;
     deployPromise = claimFlowReward();
+  };  
+  
+  const handleConfetti = async () => { 
+    confetti = !confetti;
   };  
 
   const verifyWallet = async () => {
@@ -467,12 +476,26 @@
     {#if !$signer}
     <span class="text-2xl font-semibold">Connect your wallet to get started.</span>
     {/if}
+  <Button shrink on:click={() =>{handleConfetti()}}> Toggle Confetti </Button>
     
   </div>
 
   <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 ">
     <StakeNBuy />
   </div> 
-
+  {#if confetti}
+    <div style="
+    position: fixed;
+    top: -50px;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    pointer-events: none;">
+      <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[0, 5000]} duration=7000 amount=1000 fallDistance="100vh" />
+    </div>
+  {/if}
 </div> 
 
