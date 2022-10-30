@@ -14,7 +14,7 @@
   import Input from '$components/Input.svelte';
   import Button from '$components/Button.svelte';
   import { formatUnits, getContractAddress } from 'ethers/lib/utils';
-    import IconLibrary from '$components/IconLibrary.svelte';
+  import IconLibrary from '$components/IconLibrary.svelte';
 
   let fields: any = {};
   let chessFetched, XPFetched, improveFetched, energyFetched, GMFetched
@@ -120,7 +120,7 @@
 </script>
 
 <div class="w-full h-full">
-  <div class="flex flex-col gap-y-6 p-2 overflow-scroll h-full">
+  <div class="flex flex-col gap-y-6 p-2 h-full">
     <Section> 
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
