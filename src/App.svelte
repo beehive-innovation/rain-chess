@@ -7,8 +7,8 @@
 
   import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
-  import LoginHandler from "$routes/rain-chess/loginHandler.svelte";
   import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+    import LichessHome from "$routes/rain-chess/LichessHome.svelte";
   // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
 
   $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
@@ -26,9 +26,9 @@
 
   routes = {
     // Using named parameters, with last being optional
-    "/" : LiChessLogin,
+    // "/" : LiChessLogin,
     "/player" : liChessPlayer,
-    // "/": LoginHandler,
+    "/": LichessHome,
     "/designer": GameDesigner, 
 
 
