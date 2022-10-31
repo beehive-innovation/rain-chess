@@ -170,6 +170,8 @@
       let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI, $signer)
       let decimals = await energyContract.decimals()
       let amount = option.value == 1 ? parseUnits(approveAmount.toString(), decimals.toString()) : ethers.constants.MaxUint256;
+      console.log("amount", amount);
+      
 
       if(tokenOptionValue.value == 1){ 
         

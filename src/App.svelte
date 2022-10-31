@@ -5,9 +5,9 @@
   import { signer } from "svelte-ethers-store";
   import {auth } from '$src/stores'
 
-  import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
+  import LiChessPlayer from "$routes/rain-chess/LiChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
-  import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  import LiChessLogin from "$routes/rain-chess/LiChessLogin.svelte";
     import LichessHome from "$routes/rain-chess/LichessHome.svelte";
   // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
 
@@ -27,7 +27,7 @@
   routes = {
     // Using named parameters, with last being optional
     // "/" : LiChessLogin,
-    "/player" : liChessPlayer,
+    "/player" : LiChessPlayer,
     "/": LichessHome,
     "/designer": GameDesigner, 
 

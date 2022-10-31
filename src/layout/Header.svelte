@@ -1,6 +1,6 @@
 <script>
   import WalletConnect from "../components/wallet-connect/WalletConnect.svelte";
-  import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  import LiChessLogin from "$routes/rain-chess/LiChessLogin.svelte";
 
   $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
 

@@ -25,13 +25,13 @@
   let ImproveClaimBal , ImproveDecimals, ImproveSymbol, ImproveContract, ImproveName;  
   let XPClaimBal , XPDecimals, XPSymbol, XPContract, XPName;  
 
-
+  const sleep = ms => new Promise(f => setTimeout(f, ms))
 
   const getChessContract = async () =>{
     chessFetched = true
+    await sleep(500)
 
     chesssContract  = ethers.utils.isAddress(EmissionContracts.contractAddress || "") ? new EmissionsERC20(EmissionContracts.contractAddress, $signer): null;
-
     chessTKNName = await chesssContract.name()
     chessTKNClaimBal = await chesssContract.balanceOf($signerAddress)
     chessTKNSymbol = await chesssContract.symbol()
@@ -41,7 +41,8 @@
   }
   const getEnergyContract = async () =>{
     energyFetched = true
-    
+    await sleep(500)
+
     energyContract = ethers.utils.isAddress(EmissionContracts.energyContractAddress || "") ? new EmissionsERC20(EmissionContracts.energyContractAddress, $signer): null;
     energyTKNClaimBal =  await energyContract.balanceOf($signerAddress)
     energyTKNName = await energyContract.name()
@@ -52,6 +53,7 @@
   }
   const getGMContract = async () =>{
     GMFetched = true
+    await sleep(500)
 
     GMContract = ethers.utils.isAddress(EmissionContracts.GMContract || "") ? new EmissionsERC20(EmissionContracts.GMContract, $signer): null;
     GMTKNClaimBal =  await GMContract.balanceOf($signerAddress)
@@ -63,6 +65,7 @@
   }
   const getImproveContract = async () =>{
     improveFetched = true
+    await sleep(500)
 
     ImproveContract = ethers.utils.isAddress(EmissionContracts.ImproveContract || "") ? new EmissionsERC20(EmissionContracts.ImproveContract, $signer): null;
     ImproveClaimBal =  await ImproveContract.balanceOf($signerAddress)
@@ -73,7 +76,8 @@
     improveFetched = false
   }
   const getXPContract = async () =>{
-   XPFetched = true
+    XPFetched = true
+    await sleep(500)
     
     XPContract = ethers.utils.isAddress(EmissionContracts.XPContract || "") ? new EmissionsERC20(EmissionContracts.XPContract, $signer): null;
     XPClaimBal =  await XPContract.balanceOf($signerAddress)
@@ -146,10 +150,9 @@
               {#if chessTKNClaimBal && chessTKNDecimals && chessTKNSymbol}
                 {formatUnits(chessTKNClaimBal, chessTKNDecimals)}
                 {chessTKNSymbol}
-                <!--  -->
                 <span
-                class:animate-spin={chessFetched}
-                class="contents flex-col justify-center"
+                class:animate-spin ={chessFetched}
+                class="inline-block flex-col justify-center"
                 on:click={getChessContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -189,7 +192,7 @@
               {energyTKNSymbol}
               <span
               class:animate-spin={energyFetched}
-                class="contents flex-col justify-center"
+                class="inline-block flex-col justify-center"
                 on:click={getEnergyContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -229,7 +232,7 @@
               {GMTKNSymbol}
               <span
               class:animate-spin={GMFetched}
-                class="contents flex-col justify-center"
+                class="inline-block flex-col justify-center"
                 on:click={getGMContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -270,7 +273,7 @@
               {ImproveSymbol}
               <span
               class:animate-spin={improveFetched}
-                class="contents flex-col justify-center"
+                class="inline-block flex-col justify-center"
                 on:click={getImproveContract}><IconLibrary icon="reload" /></span
               >
               {/if}
@@ -311,7 +314,7 @@
               {XPSymbol}
               <span
               class:animate-spin={XPFetched}
-                class="contents flex-col justify-center"
+                class="inline-block flex-col justify-center"
                 on:click={getXPContract}><IconLibrary icon="reload" /></span
               >
               {/if}
