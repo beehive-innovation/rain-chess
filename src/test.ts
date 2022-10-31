@@ -34,7 +34,7 @@ export const clientId = 'lichess-api-demo';
 export const lichessHost = 'https://lichess.org';
 export const BASE_PATH = location.pathname.replace(/\/$/, '');
 
-export const clientUrl = `${location.protocol}//${location.host}${BASE_PATH || '/'}#/player`;
+export const clientUrl = `${location.protocol}//${location.host}${BASE_PATH || '/'}`;
 //  export const clientUrl = `http://localhost:5173/`; 
 
 

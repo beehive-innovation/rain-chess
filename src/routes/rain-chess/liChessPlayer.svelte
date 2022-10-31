@@ -17,6 +17,7 @@
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
   import { ethers } from 'ethers';  
   import axios from 'axios'
+  import LiChessLogin from "$routes/rain-chess/LiChessLogin.svelte";
 
   import ContractsConfigs from "../../../mumbai.json"
     import { Logger, parseUnits } from "ethers/lib/utils";
@@ -55,7 +56,6 @@
   $: if($signer){   
     const authorizeAccount = async () => { 
       try { 
-
         let authToken = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
         console.log('authToken : ' , authToken)
         console.log('authToken : ' , authToken.accessToken.value) 
@@ -83,14 +83,13 @@
   
     authorizeAccount()
   }
-  // setTimeout(getAccountData, 3000);
 
   const urlParams = new URLSearchParams(window.location.search);
 
   $: if(urlParams.has('code')) { 
     const data = async () =>{
       window.history.pushState({}, null, '/');
-      push('/player')
+      // push('/player')
 
     }
     data()
@@ -247,194 +246,205 @@
 
 </script>
 
-<div class="flex gap-x-3 relative">
-  <div class="flex w-2/3 flex-col gap-y-6 p-8">
-    {#if !walletVerified }
-    <span class="text-3xl font-semibold">liChess Player</span>
-        <Section>
-          <SectionHeading>Verify Wallet</SectionHeading>
-          <SectionBody>
-            <div class="flex flex-col">          
-              
-              <div class="self-start flex flex-row items-center gap-x-2 pt-4">  
-                <span class="uppercase font-semibold">Click On Verify Button to map wallet with liChess account</span>
-                <Button shrink  on:click={() =>{verifyWallet()}}> Verify Wallet </Button>
-                
-              </div>
-            </div>
-          </SectionBody>
-        </Section>
-    {:else}  
-      <UserDetails />
-
-      {#if isWalletCorrect}
+{#if oAuth}  
+  <div class="flex gap-x-3 relative">
+    <div class="flex w-2/3 flex-col gap-y-6 p-8">
+      {#if !walletVerified }
+      <span class="text-3xl font-semibold">liChess Player</span>
           <Section>
-            <SectionHeading>
-              <div class="mb-2 flex flex-row w-full space-y-4"> 
-              <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-                <img src="/assets/EnergyToken.png" width='30' height='30' alt='twitter' class='me-4' />
-              </div>  
-              Claim Energy Token 
-              </div>
-            </SectionHeading>
-            {#if $signerAddress}
-            <SectionBody> 
-                <span class="text-gray-600">Click below to claim game energy</span>
-                <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
-                  <Button shrink on:click={() =>{mintEnergy()}}> Claim Energy </Button>
-                </div> 
-              </SectionBody>
-            {:else}
-              <span class="p-4">Please Connect your wallet</span>
-            {/if}
-          </Section>
-
-          <Section>
-            <SectionHeading>Play</SectionHeading>
+            <SectionHeading>Verify Wallet</SectionHeading>
             <SectionBody>
-              <div class="mb-2 flex flex-col w-full space-y-4"> 
-                <div class="grid grid-cols-12 items-center" >
-                  <div class="col-span-1 grid justify-center gap-y-4">
-                    <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
-                  </div>
-                  <div class="col-span-11">
-                      <p>
-                        Play a game on lichess and paste the game ID only into the input form below to verify for game.
-                      </p>
-                  </div>
-                </div>
-                <div class="grid grid-cols-12 items-center" >
-                  <div class="col-span-1 grid justify-center gap-y-4">
-                    <img src="/assets/lichess.svg" width='32' height='32' alt='twitter' class='me-4' />
-                  </div>
-                  <div class="col-span-11">
-                      <p>
-                        Based on your game id and registration, you can claim tokens !! 
-  
-                      </p>
-                  </div>  
+              <div class="flex flex-col">          
+                
+                <div class="self-start flex flex-row items-center gap-x-2 pt-4">  
+                  <span class="uppercase font-semibold">Click On Verify Button to map wallet with liChess account</span>
+                  <Button shrink  on:click={() =>{verifyWallet()}}> Verify Wallet </Button>
+                  
                 </div>
               </div>
-              <span class="text-xl font-semibold">Claimable amount expression</span>
-                <div class="max-w-prose">Enter the GameId and check claimable</div>
-                <div class="grid grid-cols-2 gap-4">
-                  <Input
-                    type="text"
-                    placeholder="Game ID"
-                    bind:this={fields.gameID}
-                    bind:value={gameID}
-                    validator={required}
-                  >
-                    <span slot="label">Name</span>
-                  </Input>
-                  <span class="inline self-end"><Button shrink small on:click={handleOptionSubmit}> Check Claim </Button></span>
-                </div>
-                <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
-                  <IconLibrary width={30} icon="tip" />
-                  <div class="max-w-prose">Remember - You need energy to Register and Verify.</div>
-                </div>
-                {#if isClaimRes}
-                  <div id="express" style="display: none;">
-                    <div class="grid grid-cols-7 gap-4 items-stretch" >
-                      <div class="col-span-4 flex flex-col gap-y-4 break-words">
-                        <Parser vmStateConfig={parserVmStateConfig} />
-                      </div>
-                      <div class="col-span-3">
-                        <div class="bg-amber-200 rounded-lg p-4 h-full ">
+            </SectionBody>
+          </Section>
+      {:else}  
+        <UserDetails />
 
-                          <div class="font-mono text-black text-sm break-words" >
-                            <span>Simulated output: </span>
-                            <span>
-                              {#if $signer}
-                                {#if simulatedResult }
-                                  {simulatedResult?.toString()}
+        {#if isWalletCorrect}
+            <Section>
+              <SectionHeading>
+                <div class="mb-2 flex flex-row w-full space-y-4"> 
+                <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+                  <img src="/assets/EnergyToken.png" width='30' height='30' alt='twitter' class='me-4' />
+                </div>  
+                Claim Energy Token 
+                </div>
+              </SectionHeading>
+              {#if $signerAddress}
+              <SectionBody> 
+                  <span class="text-gray-600">Click below to claim game energy</span>
+                  <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+                    <Button shrink on:click={() =>{mintEnergy()}}> Claim Energy </Button>
+                  </div> 
+                </SectionBody>
+              {:else}
+                <span class="p-4">Please Connect your wallet</span>
+              {/if}
+            </Section>
+
+            <Section>
+              <SectionHeading>Play</SectionHeading>
+              <SectionBody>
+                <div class="mb-2 flex flex-col w-full space-y-4"> 
+                  <div class="grid grid-cols-12 items-center" >
+                    <div class="col-span-1 grid justify-center gap-y-4">
+                      <img src="/assets/user.png" width='30' height='30' alt='twitter' class='me-4' />
+                    </div>
+                    <div class="col-span-11">
+                        <p>
+                          Play a game on lichess and paste the game ID only into the input form below to verify for game.
+                        </p>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-12 items-center" >
+                    <div class="col-span-1 grid justify-center gap-y-4">
+                      <img src="/assets/lichess.svg" width='32' height='32' alt='twitter' class='me-4' />
+                    </div>
+                    <div class="col-span-11">
+                        <p>
+                          Based on your game id and registration, you can claim tokens !! 
+    
+                        </p>
+                    </div>  
+                  </div>
+                </div>
+                <span class="text-xl font-semibold">Claimable amount expression</span>
+                  <div class="max-w-prose">Enter the GameId and check claimable</div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <Input
+                      type="text"
+                      placeholder="Game ID"
+                      bind:this={fields.gameID}
+                      bind:value={gameID}
+                      validator={required}
+                    >
+                      <span slot="label">Name</span>
+                    </Input>
+                    <span class="inline self-end"><Button shrink small on:click={handleOptionSubmit}> Check Claim </Button></span>
+                  </div>
+                  <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
+                    <IconLibrary width={30} icon="tip" />
+                    <div class="max-w-prose">Remember - You need energy to Register and Verify.</div>
+                  </div>
+                  {#if isClaimRes}
+                    <div id="express" style="display: none;">
+                      <div class="grid grid-cols-7 gap-4 items-stretch" >
+                        <div class="col-span-4 flex flex-col gap-y-4 break-words">
+                          <Parser vmStateConfig={parserVmStateConfig} />
+                        </div>
+                        <div class="col-span-3">
+                          <div class="bg-amber-200 rounded-lg p-4 h-full ">
+
+                            <div class="font-mono text-black text-sm break-words" >
+                              <span>Simulated output: </span>
+                              <span>
+                                {#if $signer}
+                                  {#if simulatedResult }
+                                    {simulatedResult?.toString()}
+                                  {:else}
+                                    ''
+                                  {/if}
                                 {:else}
-                                  ''
+                                  Connect your wallet to simulate your expression
                                 {/if}
-                              {:else}
-                                Connect your wallet to simulate your expression
-                              {/if}
-                            </span>
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
+                          <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
+                        {#if !$signer}
+                          <span class="text-gray-600">Connect your wallet to deploy</span>
+                        {/if}
+                      </div>
                     </div>
-                    <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-                        <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
+                  {/if}
+              </SectionBody>
+            </Section> 
+
+
+
+            {#if claim} 
+              <Section>
+                <SectionHeading>Claim Rewards for game</SectionHeading>
+                <SectionBody>
+                  <div class="flex flex-col gap-4">          
+                    <Select
+                      items={tokenOption}
+                      bind:value={tokenOptionValue}
+                      on:change={()=>{
+                        document.getElementById("getApprove").style.display = 'block'
+                      }}
+                    >
+                      <span slot="label"> Select The Token to Claim Reward for: </span>
+                    </Select>
+                    <span id="getApprove" style="display: none;">
+                      <Select
+                          items={Options}
+                          bind:value={option}
+                          on:change={() =>{
+                            if(option.value == 1 ){
+                              document.getElementById("amount").style.display = 'grid'
+                            }else{
+                              document.getElementById("amount").style.display = 'none'
+                            }
+                          }}
+                        >
+                          <span slot="label"> Select The Option: </span>
+                      </Select>
+                        <div id="amount" class="w-full" style="display: none;">
+                          <div class="grid grid-cols-2 gap-4">
+                          <Input
+                            type="number"
+                            placeholder="Enter Amount"
+                            bind:this={fields.approveAmount}
+                            bind:value={approveAmount}
+                            validator={required}
+                          >
+                            <span slot="label">Enter the units to approve</span>
+                          </Input>
+                        </div>
+                    </span>
+                    <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+                      <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit()}}> Submit </Button>
                       {#if !$signer}
-                        <span class="text-gray-600">Connect your wallet to deploy</span>
+                      <span class="text-gray-600">Connect your wallet to deploy</span>
                       {/if}
                     </div>
                   </div>
-                {/if}
-            </SectionBody>
-          </Section> 
-
-
-
-          {#if claim} 
-            <Section>
-              <SectionHeading>Claim Rewards for game</SectionHeading>
-              <SectionBody>
-                <div class="flex flex-col gap-4">          
-                  <Select
-                    items={tokenOption}
-                    bind:value={tokenOptionValue}
-                    on:change={()=>{
-                      document.getElementById("getApprove").style.display = 'block'
-                    }}
-                  >
-                    <span slot="label"> Select The Token to Claim Reward for: </span>
-                  </Select>
-                  <span id="getApprove" style="display: none;">
-                    <Select
-                        items={Options}
-                        bind:value={option}
-                        on:change={() =>{
-                          if(option.value == 1 ){
-                            document.getElementById("amount").style.display = 'grid'
-                          }else{
-                            document.getElementById("amount").style.display = 'none'
-                          }
-                        }}
-                      >
-                        <span slot="label"> Select The Option: </span>
-                    </Select>
-                      <div id="amount" class="w-full" style="display: none;">
-                        <div class="grid grid-cols-2 gap-4">
-                        <Input
-                          type="number"
-                          placeholder="Enter Amount"
-                          bind:this={fields.approveAmount}
-                          bind:value={approveAmount}
-                          validator={required}
-                        >
-                          <span slot="label">Enter the units to approve</span>
-                        </Input>
-                      </div>
-                  </span>
-                  <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
-                    <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit()}}> Submit </Button>
-                    {#if !$signer}
-                    <span class="text-gray-600">Connect your wallet to deploy</span>
-                    {/if}
-                  </div>
-                </div>
-              </SectionBody>
-            </Section>
-          {/if}  
+                </SectionBody>
+              </Section>
+            {/if}  
+        {/if}
       {/if}
-    {/if}
 
-    {#if !$signer}
-    <span class="text-2xl font-semibold">Connect your wallet to get started.</span>
-    {/if}
-    
-  </div>
+      {#if !$signer}
+      <span class="text-2xl font-semibold">Connect your wallet to get started.</span>
+      {/if}
+      
+    </div>
 
-  <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 ">
-    <StakeNBuy />
+    <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 ">
+      <StakeNBuy />
+    </div> 
+
   </div> 
+{:else}
+  <div id="getHeight">
+    <LiChessLogin />
+  </div>
+{/if}
 
-</div> 
-
+<style>
+	#getHeight{
+		height: 83vh;
+	}
+</style>

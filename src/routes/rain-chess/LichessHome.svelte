@@ -7,6 +7,16 @@
     import GameDesigner from "./GameDesigner.svelte";
     import Intro from "./Intro.svelte";
 
+    const urlParams = new URLSearchParams(window.location.search);
+    $: if(urlParams.has('code')) { 
+        const data = async () =>{
+        window.history.pushState({}, null, '/');
+        // push('/player')
+
+        }
+        data()
+    }
+
 </script>
 
 <div class="flex w-full flex-col gap-y-4">
@@ -15,7 +25,7 @@
             <TabList>
                 <Tab>Intro</Tab>
                 <Tab>Sign & Claim</Tab>
-                <Tab>Rewards</Tab>
+                <!-- <Tab>Rewards</Tab> -->
                 <Tab>Designer</Tab>
             </TabList>
         </div>
@@ -25,9 +35,9 @@
         <TabPanel>
             <LiChessPlayer />
         </TabPanel>
-        <TabPanel>
+        <!-- <TabPanel>
             Rewards
-        </TabPanel>
+        </TabPanel> -->
         <TabPanel>
             <GameDesigner />
         </TabPanel>

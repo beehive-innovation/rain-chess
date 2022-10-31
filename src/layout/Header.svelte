@@ -11,7 +11,7 @@
 >
   <div class="flex flex-row gap-x-3">
     <img src="/assets/logo.svg" alt="Rain Logo" class="w-7" />
-    <span class="text-xl font-light text-gray-50">Rain Protocol</span>
+    <span class="text-xl font-light text-gray-50">Rain Chess</span>
   </div>
   <div class="flex flex-row items-center gap-x-4">
     
