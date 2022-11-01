@@ -36,8 +36,8 @@
 
 </script>
 
-<div class="border-t border-gray-400 h-full">
-    <div class="border-b border-gray-400 p-2 w-full font-semibold">Other liChess Expressions</div>
+<div class=" border-gray-400 h-96">
+    <!-- <div class="border-b border-gray-400 p-2 w-full font-semibold">Other liChess Expressions</div> -->
     <div class="flex flex-col overflow-scroll h-full">
         {#if $allTokens.data?.emissionsERC20S}
             {#each $allTokens?.data.emissionsERC20S as token}

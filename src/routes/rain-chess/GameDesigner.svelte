@@ -29,9 +29,12 @@
     import OtherTokens from "$routes/rain-chess/OtherTokens.svelte";
     import { getContext } from "svelte";
     import { push } from "svelte-spa-router";
-    import Select from "$components/Select.svelte";
+    import Accordion from "$components/accordion/Accordion.svelte";
+    import AccordionItem from "$components/accordion/AccordionItem.svelte"
 
   const { open } = getContext('simple-modal')
+
+  let active = null;
 
   let deployPromise;
   const Options = [
@@ -261,9 +264,18 @@
     </div>
   </div>
 
-  <div class="w-1/3 gap-y-4 fixed bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2 break-all">
-    <OpDocs {OpMeta} />
-    <OtherTokens />
+  <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 grid grid-rows-2 break-all">
+    <div class="space-y-4 m-4">      
+      <Accordion bind:active>
+        <AccordionItem id="0" title="Available Words">
+          <OpDocs {OpMeta} />
+        </AccordionItem> 
+    
+        <AccordionItem id="1" title="Other liChess Expressions">
+          <OtherTokens />
+        </AccordionItem> 
+      </Accordion>
+    </div>
   </div>
 
 </div>

@@ -20,7 +20,8 @@
     | "add"
     | "down-arrow"
     | "tip"
-    | "share";
+    | "share"
+    | "up-arrow";
   export let inline = true;
 
   $: if (!height) {
@@ -301,7 +302,7 @@
     />
   </svg>
 {:else if icon == "down-arrow"}
-  <svg
+  <!-- <svg
     class:inline
     class="fill-current {color}"
     {width}
@@ -310,6 +311,18 @@
     xmlns="http://www.w3.org/2000/svg"
   >
     <path d="M0 0 L12 10 L24 0" />
+  </svg> -->
+  <!-- <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /> -->
+  <svg 
+    class:inline
+    class="fill-current {color}"
+    {width}
+    {height} 
+    viewBox="0 0 24 24" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M19 9l-7 7-7-7" />
   </svg>
 {:else if icon == "tip"}
   <svg 
@@ -331,7 +344,19 @@
   xmlns="http://www.w3.org/2000/svg">
     <path fill="transparent" d="M18.737 26.6558L29.7364 43.9406L43.8786 1.51419L1.45215 15.6563L18.737 26.6558ZM18.737 26.6558L31.3078 14.085" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
+{:else if icon == "up-arrow"}
+  <svg
+    class:inline
+    class="fill-current {color}"
+    {width}
+    {height}
+    viewBox="0 0 22 22"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M0 0 L12 10 L24 0" />
+  </svg>
 {/if}
+
 
 <style>
   .inline {

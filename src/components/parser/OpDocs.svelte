@@ -33,12 +33,12 @@ onMount(()=>{
 })
 </script>
 
-<div class="flex flex-col h-full">
-    <span class="text-lg p-2 font-semibold">Available words</span>
+<div class="flex flex-col h-96">
+    <!-- <span class="text-lg p-2 font-semibold">Available words</span> -->
     <div>
-        <input bind:value={searchStr} class="bg-transparent p-2 border-y border-gray-400 w-full" type="text" placeholder="Search"/>
+        <input bind:value={searchStr} class="bg-transparent p-2 border-gray-400 w-full" type="text" placeholder="Search"/>
     </div>
-    <div class="flex flex-col text-sm overflow-scroll h-full cursor-pointer break-words">
+    <div class="flex flex-col text-sm overflow-scroll h-4/6 cursor-pointer break-words">
         {#each categories as category}
             <span class="bg-gray-300 p-2">
                 {category}
@@ -78,8 +78,8 @@ onMount(()=>{
             </div>
         {/each}
     </div>  
-    <span class="text-lg p-2 font-semibold">Avalibale Resources</span>
-    <div class="flex flex-col text-sm overflow-scroll h-full cursor-pointer break-words"> 
+    <span class="text-lg p-2 font-semibold">Available Resources</span>  
+    <div class="flex border flex-col text-sm overflow-scroll h-2/6 cursor-pointer break-words"> 
         <div class="flex flex-col">
            
             <div 
