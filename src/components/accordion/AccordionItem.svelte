@@ -5,7 +5,7 @@
     import IconLibrary from '$components/IconLibrary.svelte';
 
     import { slide } from "svelte/transition";
-    import Section from './Section.svelte';
+    import Section from '$src/routes/rain-chess/Section.svelte';
     
     export let id;
 

@@ -33,7 +33,9 @@
   let simulatedResult , deployPromise, claim = false  
 
   let walletVerified = true, isWalletCorrect = false
-  let isClaimRes = false, approveAmount
+  let isClaimRes = false, approveAmount 
+  let approved = false
+  
   
 
   const Options = [
@@ -61,7 +63,7 @@
         console.log('authToken : ' , authToken.accessToken.value) 
         oAuth = authToken
 
-        let authResult = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
+        let authResult = await axios.post('http://localhost:5000/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
         isWalletCorrect = true
         alert(`${authResult.data.message}`)
         
@@ -106,44 +108,13 @@
     }
   }   
 
-  // const approve = async () => {
-  //   let tx, txReceipt, errorMsg;
-  //   txStatus = TxStatus.AwaitingSignature;
-
-  //   try {
-  //     tx = await .approve(saleData.id, ethers.constants.MaxUint256);
-
-  //     // txStatus = TxStatus.AwaitingConfirmation;
-  //     txReceipt = await tx.wait();
-  //   } catch (error) {
-  //     if (error.code === Logger.errors.TRANSACTION_REPLACED) {
-  //       if (error.cancelled) {
-  //         errorMsg = "Transaction Cancelled";
-  //         // txStatus = TxStatus.Error;
-  //         return;
-  //       } else {
-  //         txReceipt = await error.replacement.wait();
-  //       }
-  //     } else {
-  //       errorMsg =
-  //         error.error?.data?.message ||
-  //         error.error?.message ||
-  //         error.data?.message ||
-  //         error?.message;
-  //       // txStatus = TxStatus.Error;
-  //       return;
-  //     }
-  //   }
-
-  //   activeStep = ApproveSteps.Complete;
-  //   txStatus = TxStatus.None;
-  // }; 
+ 
 
   const handleOptionSubmit = async () => { 
     console.log("In handle Submit : " , gameID) 
     isClaimRes = true
     try{
-      let claimResult = await axios.post(`https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/computeGame` , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value})
+      let claimResult = await axios.post(`http://localhost:5000/api/v2/computeGame` , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value})
       console.log(claimResult?.data)
       // isClaimRes = true
       document.getElementById("express").style.display = "grid";
@@ -165,26 +136,22 @@
 
   const handleTokenOptionSubmit = async () => { 
     try { 
-      let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()  
-      let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI, $signer)
-      let decimals = await energyContract.decimals()
-      let amount = option.value == 1 ? parseUnits(approveAmount.toString(), decimals.toString()) : ethers.constants.MaxUint256;
-      console.log("amount", amount);
+      // let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()  
+      let gameIdUint = 12312345678
       
-
       if(tokenOptionValue.value == 1){ 
         
         let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , ContractsConfigs.contractABI, $signer)
 
-        energyContract.approve(contractWIN.address, amount)
-
+  
         let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
         console.log(receipt)  
       }
       else if(tokenOptionValue.value == 2){
         let contractXP = new ethers.Contract(ContractsConfigs.flow_XP , ContractsConfigs.contractABI, $signer)
-        energyContract.approve(contractXP.address, amount)
+      
+        
 
         let tx = await contractXP.flow(ContractsConfigs.flowStates_XP.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
@@ -193,7 +160,8 @@
       }
       else if(tokenOptionValue.value == 3){
         let contractGM = new ethers.Contract(ContractsConfigs.flow_GM , ContractsConfigs.contractABI, $signer)
-        energyContract.approve(contractGM.address, amount)
+        
+        
         let tx = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
 
@@ -201,7 +169,7 @@
       }
       else if(tokenOptionValue.value == 4){
         let contractImprove = new ethers.Contract(ContractsConfigs.flow_IMPROVE , ContractsConfigs.contractABI, $signer)
-        energyContract.approve(contractImprove.address, amount)
+       
         let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
 
@@ -217,7 +185,7 @@
 
   const claimFlowReward = async () => {  
     claim = true 
-    let gameData = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
+    let gameData = await axios.post('http://localhost:5000/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
     claim = true 
     signedContext = gameData.data.data 
 }
@@ -232,7 +200,7 @@
   const verifyWallet = async () => {
     let sig = await $signer.signMessage("RAIN_LI_CHESS_ACCOUNT_VERFICATION")   
 
-    let verifyReq = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
+    let verifyReq = await axios.post('http://localhost:5000/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
     console.log(verifyReq.data) 
     walletVerified = true 
   } 
@@ -242,6 +210,70 @@
     let tx = await energyContract.flow( ContractsConfigs.flowStates_ENERGY_MINT.hex , 12323223, [] , {value : ethers.utils.parseEther('0')} ) 
     let receipt = await tx.wait() 
     console.log(receipt)
+  } 
+
+  const checkApproval = async () => { 
+
+    console.log("tokenOptionValue : " , tokenOptionValue)  
+    let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI, $signer) 
+
+    
+
+    if(tokenOptionValue.value == 1){  
+      let allowance = await energyContract.allowance($signerAddress ,ContractsConfigs.flow_WIN )  
+      approved =  allowance.gt(ethers.BigNumber.from('10'))
+      console.log("approved 1: " , approved)  
+    } else  if(tokenOptionValue.value == 2){  
+      let allowance = await energyContract.allowance($signerAddress ,ContractsConfigs.flow_XP )  
+      approved =  allowance.gt(ethers.BigNumber.from('10'))
+      console.log("approved 2: " , approved)  
+    } else  if(tokenOptionValue.value == 3){  
+      let allowance = await energyContract.allowance($signerAddress ,ContractsConfigs.flow_GM )  
+      approved =  allowance.gt(ethers.BigNumber.from('10'))
+      console.log("approved 3: " , approved)  
+    } else  if(tokenOptionValue.value == 4){  
+      let allowance = await energyContract.allowance($signerAddress ,ContractsConfigs.flow_IMPROVE )  
+      approved =  allowance.gt(ethers.BigNumber.from('10'))
+      console.log("approved 4: " , approved)  
+    } 
+
+
+
+  } 
+
+  const approveTokens = async () => {  
+
+    console.log(tokenOptionValue)  
+    let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI , $signer) 
+
+    if(tokenOptionValue.value == 1){ 
+
+      let approveTx = await energyContract.approve(ContractsConfigs.flow_WIN, ethers.constants.MaxUint256) 
+      await approveTx.wait()
+      approved = true
+
+    }else if(tokenOptionValue.value == 2){ 
+      let approveTx = await energyContract.approve(ContractsConfigs.flow_XP, ethers.constants.MaxUint256) 
+      await approveTx.wait() 
+      approved = true
+
+    }else if(tokenOptionValue.value == 3){
+
+      let approveTx = await energyContract.approve(ContractsConfigs.flow_GM, ethers.constants.MaxUint256) 
+      await approveTx.wait()
+      approved = true
+
+      
+    }else if(tokenOptionValue.value == 4){ 
+      let approveTx = await energyContract.approve(ContractsConfigs.flow_IMPROVE, ethers.constants.MaxUint256) 
+      await approveTx.wait()
+      approved = true
+
+    
+    } 
+
+    
+
   }
 
 </script>
@@ -380,45 +412,28 @@
                     <Select
                       items={tokenOption}
                       bind:value={tokenOptionValue}
-                      on:change={()=>{
-                        document.getElementById("getApprove").style.display = 'block'
-                      }}
+                      on:change={checkApproval}
                     >
                       <span slot="label"> Select The Token to Claim Reward for: </span>
-                    </Select>
-                    <span id="getApprove" style="display: none;">
-                      <Select
-                          items={Options}
-                          bind:value={option}
-                          on:change={() =>{
-                            if(option.value == 1 ){
-                              document.getElementById("amount").style.display = 'grid'
-                            }else{
-                              document.getElementById("amount").style.display = 'none'
-                            }
-                          }}
-                        >
-                          <span slot="label"> Select The Option: </span>
-                      </Select>
-                        <div id="amount" class="w-full" style="display: none;">
-                          <div class="grid grid-cols-2 gap-4">
-                          <Input
-                            type="number"
-                            placeholder="Enter Amount"
-                            bind:this={fields.approveAmount}
-                            bind:value={approveAmount}
-                            validator={required}
-                          >
-                            <span slot="label">Enter the units to approve</span>
-                          </Input>
-                        </div>
-                    </span>
+                    </Select> 
+                    {#if approved}  
                     <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
                       <Button shrink disabled={!$signer} on:click={() =>{handleTokenOptionSubmit()}}> Submit </Button>
                       {#if !$signer}
                       <span class="text-gray-600">Connect your wallet to deploy</span>
                       {/if}
                     </div>
+                    {:else}
+                    <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+                      <Button shrink disabled={!$signer} on:click={() =>{approveTokens()}}> Approve </Button>
+                      {#if !$signer}
+                      <span class="text-gray-600">Connect your wallet to deploy</span>
+                      {/if}
+                    </div>
+
+                    {/if}
+                   
+                    
                   </div>
                 </SectionBody>
               </Section>
