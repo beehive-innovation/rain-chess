@@ -5,7 +5,6 @@
     import IconLibrary from '$components/IconLibrary.svelte';
 
     import { slide } from "svelte/transition";
-    import Section from '$src/routes/rain-chess/Section.svelte';
     
     export let id;
 
@@ -35,8 +34,7 @@
 </script>
 
 
-<Section>
-
+<div class="flex flex-col items-stretch border border-gray-400 rounded-lg">
     <button 
     on:click={onClickHandler}
     on:mouseenter={() => isHovered = true}
@@ -46,9 +44,9 @@
     class="flex text-left w-full focus:outline-none items-center p-2 pl-4">
         <div class="w-full">
             <div class="font-semibold text-lgmb-1 transition text-gray-700"
-                class:text-blue-400={isHovered || isFocused}
+                class:text-zinc-800={isHovered || isFocused}
             >
-                <span class="inline-block  border-transparent transition"
+                <span class="inline-block border-transparent transition"
                     class:border-opacity-50={isFocused}
                     class:border-blue-300={isFocused}
                 >
@@ -57,9 +55,9 @@
             </div>
         </div>
 
-        <div class="w-8 transform  transition text-gray-300"
+        <div class="w-8 transform transition text-gray-300"
             class:rotate-180={isCurrentActive}
-            class:text-blue-400={isHovered || isFocused}
+            class:text-zinc-800={isHovered || isFocused}
         >
             <IconLibrary width={30} icon="down-arrow" />
         </div>
@@ -70,4 +68,4 @@
             <slot/>
         </div>
     {/if}
-</Section>
+</div>

@@ -78,6 +78,10 @@
                         </div>
                     </dl>
                 </Section>
+                <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
+                    <IconLibrary width={30} icon="tip" />
+                    <div class="max-w-prose">If you lose a game, you can only claim <span class="font-bold">Experience(XP) Token</span>!</div>
+                  </div>
         </SectionBody>
     </div>
     <div class="pt-6 w-2/3">

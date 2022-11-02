@@ -2,80 +2,24 @@
   "network": "mumbai",
   "integrity": "0x968127d97843180732F20FD9F46eD1AEbCE2FCdE",
   "integrityBlock": 28855167,
-  "flowERC20Factory": "0x503d209D29dC283A87deb1A52c2DB8aeaB8D5eE1",
-  "flowERC20FactoryBlockNumber": 28855170,
-  "flow_ENERGY": "0xAbc93303b4174C3A582EA190E81Ce9f76700b2B8",
-  "flow_ENERGYBlockNumber": 28855172,
-  "flowStates_ENERGY_BURN": {
-    "type": "BigNumber",
-    "hex": "0x58e940b3248294734a62641b5cded16671be5f08c54c2ca2ec8b3663acdcd996"
-  },
-  "flowStates_ENERGY_MINT": {
-    "type": "BigNumber",
-    "hex": "0x8f5ddf69b37c288d3e8002862e4cd9aa5e1b320ff1824fb2076ec13e4866d1a2"
-  },
-  "flow_WIN": "0x1A63E47504bb589B7013161caB1658bC70bb363B",
-  "flow_WINBlockNumber": 28855176,
-  "flowStates_WIN": {
-    "type": "BigNumber",
-    "hex": "0xf8e7209de5255ce02dd7d04050056cae78575c17e142ba6fc8b52cf84457bd09"
-  },
-  "flow_GM": "0x4D2e0378448fB85D65F0ddBd9401a8Bb50ABaAB4",
-  "flow_GMBlockNumber": 28855178,
-  "flowStates_GM": {
-    "type": "BigNumber",
-    "hex": "0xa5a627bd18fdc17c5229d65a64fa317bd99b4d5d9cb56abcecabb035ec4c552c"
-  },
-  "flow_IMPROVE": "0x06B957F7D9460526957ee581D10D29Fa31Dbba0E",
-  "flow_IMPROVEBlockNumber": 28855178,
-  "flowStates_IMPROVE": {
-    "type": "BigNumber",
-    "hex": "0x62167b74ad1fb4ac7176fcc7c3ec409149db3b1a9324579916087e152d815c7a"
-  },
-  "flow_XP": "0x744746C9DaB9E68D2797513221Cbc10256cA3e58",
-  "flow_XPBlockNumber": 28855178,
-  "flowStates_XP": {
-    "type": "BigNumber",
-    "hex": "0x13b9f0d73f979bd0dcfc2e3178a37830c0e537982259ba191ee8afcd9c5a5b53"
-  },
+  "flowERC20Factory": "0xED514e1dE747F772561845792C8d7456d90F0Ae9",
+  "flowERC20FactoryBlockNumber": 28939495,
+  "flow_ENERGY": "0x86e00326de403475fd0995A4CE211fB190916496",
+  "flow_ENERGYBlockNumber": 28939497,
+  "flowStates_ENERGY_MINT": "0x2d753228a2b55E6cBc4001A6aD64e6ceC00317d0",
+  "flow_WIN": "0x602Db3922001eC3E0Fe4535129605507756EFB11",
+  "flow_WINBlockNumber": 28939501,
+  "flowStates_WIN": "0xB05924D024E5f9BdAff8Ac76509D0d6ff7Da4aA1",
+  "flow_GM": "0xb5a2E1B7bbDE171F362913103F98284ec3f19B2C",
+  "flow_GMBlockNumber": 28939505,
+  "flowStates_GM": "0xA376Bc67F891aF6eeC9E83Dc6195C8a8e1AC77C8",
+  "flow_IMPROVE": "0x6065d9C71D15B88b62E48f3260B0aeBdb95a2f24",
+  "flow_IMPROVEBlockNumber": 28939505,
+  "flowStates_IMPROVE": "0x55719FfFdD61A60D930C37957CfD64aD9855DfEa",
+  "flow_XP": "0x39e5d5FFf3Cc3462e01D477296d49a8DE993835F",
+  "flow_XPBlockNumber": 28939505,
+  "flowStates_XP": "0x6c8a63D0aABc7e30d634eAa74AAa836D8dA9Ee9A",
   "contractABI": [
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "interpreterIntegrity_",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_size",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_end",
-          "type": "uint256"
-        }
-      ],
-      "name": "InvalidCodeAtRange",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "WriteError",
-      "type": "error"
-    },
     {
       "anonymous": false,
       "inputs": [
@@ -136,25 +80,47 @@
                 }
               ],
               "internalType": "struct StateConfig",
-              "name": "interpreterStateConfig",
+              "name": "stateConfig",
               "type": "tuple"
             },
             {
               "components": [
                 {
-                  "internalType": "bytes[]",
-                  "name": "sources",
-                  "type": "bytes[]"
+                  "internalType": "address",
+                  "name": "expressionDeployer",
+                  "type": "address"
                 },
                 {
-                  "internalType": "uint256[]",
-                  "name": "constants",
-                  "type": "uint256[]"
+                  "internalType": "address",
+                  "name": "interpreter",
+                  "type": "address"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes[]",
+                      "name": "sources",
+                      "type": "bytes[]"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "constants",
+                      "type": "uint256[]"
+                    }
+                  ],
+                  "internalType": "struct StateConfig[]",
+                  "name": "flows",
+                  "type": "tuple[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "flowFinalMinStack",
+                  "type": "uint256"
                 }
               ],
-              "internalType": "struct StateConfig[]",
-              "name": "flows",
-              "type": "tuple[]"
+              "internalType": "struct FlowCommonConfig",
+              "name": "flowConfig",
+              "type": "tuple"
             }
           ],
           "indexed": false,
@@ -177,43 +143,6 @@
         }
       ],
       "name": "Initialized",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "components": [
-            {
-              "internalType": "bytes[]",
-              "name": "sources",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "constants",
-              "type": "uint256[]"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct StateConfig",
-          "name": "config",
-          "type": "tuple"
-        }
-      ],
-      "name": "SaveInterpreterState",
       "type": "event"
     },
     {
@@ -348,9 +277,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "address",
           "name": "flow_",
-          "type": "uint256"
+          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -594,25 +523,47 @@
                 }
               ],
               "internalType": "struct StateConfig",
-              "name": "interpreterStateConfig",
+              "name": "stateConfig",
               "type": "tuple"
             },
             {
               "components": [
                 {
-                  "internalType": "bytes[]",
-                  "name": "sources",
-                  "type": "bytes[]"
+                  "internalType": "address",
+                  "name": "expressionDeployer",
+                  "type": "address"
                 },
                 {
-                  "internalType": "uint256[]",
-                  "name": "constants",
-                  "type": "uint256[]"
+                  "internalType": "address",
+                  "name": "interpreter",
+                  "type": "address"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes[]",
+                      "name": "sources",
+                      "type": "bytes[]"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "constants",
+                      "type": "uint256[]"
+                    }
+                  ],
+                  "internalType": "struct StateConfig[]",
+                  "name": "flows",
+                  "type": "tuple[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "flowFinalMinStack",
+                  "type": "uint256"
                 }
               ],
-              "internalType": "struct StateConfig[]",
-              "name": "flows",
-              "type": "tuple[]"
+              "internalType": "struct FlowCommonConfig",
+              "name": "flowConfig",
+              "type": "tuple"
             }
           ],
           "internalType": "struct FlowERC20Config",
@@ -622,6 +573,25 @@
       ],
       "name": "initialize",
       "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "data",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "multicall",
+      "outputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "results",
+          "type": "bytes[]"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -753,9 +723,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "internalType": "address",
           "name": "flow_",
-          "type": "uint256"
+          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -945,31 +915,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "storageOpcodesRange",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "pointer",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "length",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct StorageOpcodesRange",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "pure",
       "type": "function"
     },
     {
