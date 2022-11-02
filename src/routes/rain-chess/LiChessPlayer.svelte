@@ -53,7 +53,7 @@
         let authToken = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
         oAuth = authToken
 
-        let authResult = await axios.post('http://localhost:5000/lichess/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
+        let authResult = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
         isWalletCorrect = true
         alert(`${authResult.data.message}`)
         
@@ -101,7 +101,7 @@
   const handleOptionSubmit = async () => { 
     isClaimRes = true
     try{
-      let claimResult = await axios.post(`http://localhost:5000/lichess/api/v2/computeGame` , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value})
+      let claimResult = await axios.post(`https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/computeGame` , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value})
       console.log(claimResult?.data)
       // isClaimRes = true
       document.getElementById("express").style.display = "grid";
@@ -123,7 +123,7 @@
 
   const claimFlowReward = async () => {  
     claim = true 
-    let gameData = await axios.post('http://localhost:5000/lichess/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
+    let gameData = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
     claim = true 
     signedContext = gameData.data.data 
 }
@@ -137,7 +137,7 @@
   const verifyWallet = async () => {
     let sig = await $signer.signMessage("RAIN_LI_CHESS_ACCOUNT_VERFICATION")   
 
-    let verifyReq = await axios.post('http://localhost:5000/lichess/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
+    let verifyReq = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
     walletVerified = true 
   } 
 
