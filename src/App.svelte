@@ -5,10 +5,10 @@
   import { signer } from "svelte-ethers-store";
   import {auth } from '$src/stores'
 
-  import liChessPlayer from "$routes/rain-chess/liChessPlayer.svelte";
+  import LiChessPlayer from "$routes/rain-chess/LiChessPlayer.svelte";
   import GameDesigner from "$routes/rain-chess/GameDesigner.svelte";
-  import LoginHandler from "$routes/rain-chess/loginHandler.svelte";
-  import LiChessLogin from "$routes/rain-chess/liChessLogin.svelte";
+  import LiChessLogin from "$routes/rain-chess/LiChessLogin.svelte";
+    import LichessHome from "$routes/rain-chess/LichessHome.svelte";
   // import LoginHandlerCode from "$routes/rain-chess/loginHandlerCode.svelte";
 
   $: oAuth = localStorage.getItem('oauth2authcodepkce-state')
@@ -26,9 +26,9 @@
 
   routes = {
     // Using named parameters, with last being optional
-    "/" : LiChessLogin,
-    "/player" : liChessPlayer,
-    // "/": LoginHandler,
+    // "/" : LiChessLogin,
+    "/player" : LiChessPlayer,
+    "/": LichessHome,
     "/designer": GameDesigner, 
 
 

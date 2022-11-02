@@ -6,10 +6,7 @@
     import Button from "$components/Button.svelte";
     import { push, replace } from "svelte-spa-router";
 
-    export let show = true;
-
-    console.log("show", show);
-    
+    export let show = true;    
 
   const urlParams = new URLSearchParams(window.location.search);      
   
@@ -58,12 +55,9 @@
 
   const loginWithLichess = async () => { 
 
-console.log("auth", $auth);
-
-  let data = await $auth.login()   
-  console.log("data", data);
-  
-};
+    let data = await $auth.login()   
+ 
+  };
 
 
 </script>

@@ -1,5 +1,6 @@
 <script context="module">
 	export const TABS = {};
+	
 </script>
 
 <script>

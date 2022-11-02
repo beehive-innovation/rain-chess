@@ -42,6 +42,7 @@
     "graphql": "^16.5.0",
     "js-sha3": "^0.8.0",
     "luxon": "^3.0.1",
+    "prettier-plugin-svelte": "^2.8.0",
     "process": "^0.11.10",
     "rain-sdk": "git+https://github.com/beehive-innovation/rain-sdk.git#1d8815c89d764f82d8ae61c5c33cf5aa21f5cb87",
     "svelte-ethers-store": "^0.6.3",
