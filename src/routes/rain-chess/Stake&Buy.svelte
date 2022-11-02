@@ -129,7 +129,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/winToken.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/winToken.png" width='30' height='30' alt='winToken' class='me-4' />
           </div>  
           Win Token Details 
         </div>
@@ -168,7 +168,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
         <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-          <img src="/assets/EnergyToken.png" width='30' height='30' alt='twitter' class='me-4' />
+          <img src="/assets/EnergyToken.png" width='30' height='30' alt='energyToken' class='me-4' />
         </div>  
         Energy Token Details
         </div>
@@ -208,7 +208,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/GMToken.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/GMToken.png" width='30' height='30' alt='gmToken' class='me-4' />
           </div>  
           GM Token Details
         </div>
@@ -249,7 +249,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/improveToken.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/improveToken.png" width='30' height='30' alt='improveToken' class='me-4' />
           </div>  
           Improve Token Details
         </div>
@@ -290,7 +290,7 @@
       <SectionHeading>
         <div class="mb-2 flex flex-row w-full space-y-4"> 
           <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-            <img src="/assets/XPToken.png" width='30' height='30' alt='twitter' class='me-4' />
+            <img src="/assets/XPToken.png" width='30' height='30' alt='xpToken' class='me-4' />
           </div>  
           XP Token Details
         </div>
