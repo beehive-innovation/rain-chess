@@ -136,15 +136,17 @@
 
   const handleTokenOptionSubmit = async () => { 
     try { 
-      // let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()  
-      let gameIdUint = 12312345678
+       let gameIdUint = ethers.BigNumber.from(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(gameID))).toString()  
+     // let gameIdUint = 12312345678 
+
+      console.log('signedContext : ' , signedContext )
       
       if(tokenOptionValue.value == 1){ 
         
         let contractWIN = new ethers.Contract(ContractsConfigs.flow_WIN , ContractsConfigs.contractABI, $signer)
 
   
-        let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+        let tx = await contractWIN.flow(ContractsConfigs.flowStates_WIN , gameIdUint , [signedContext[0]] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
         console.log(receipt)  
       }
@@ -153,7 +155,7 @@
       
         
 
-        let tx = await contractXP.flow(ContractsConfigs.flowStates_XP.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+        let tx = await contractXP.flow(ContractsConfigs.flowStates_XP , gameIdUint , [signedContext[1]] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
 
         console.log(receipt) 
@@ -162,7 +164,7 @@
         let contractGM = new ethers.Contract(ContractsConfigs.flow_GM , ContractsConfigs.contractABI, $signer)
         
         
-        let tx = await contractGM.flow(ContractsConfigs.flowStates_GM.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+        let tx = await contractGM.flow(ContractsConfigs.flowStates_GM , gameIdUint , [signedContext[0]] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
 
         console.log(receipt) 
@@ -170,7 +172,7 @@
       else if(tokenOptionValue.value == 4){
         let contractImprove = new ethers.Contract(ContractsConfigs.flow_IMPROVE , ContractsConfigs.contractABI, $signer)
        
-        let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE.hex , gameIdUint , [signedContext] , {value : ethers.utils.parseEther('0')} ) 
+        let tx = await contractImprove.flow(ContractsConfigs.flowStates_IMPROVE , gameIdUint , [signedContext[0]] , {value : ethers.utils.parseEther('0')} ) 
         let receipt = await tx.wait()  
 
         console.log(receipt) 
@@ -180,7 +182,7 @@
       console.log(error) 
       alert('CANT_FLOW')
       
-    }
+    }  
   }
 
   const claimFlowReward = async () => {  
@@ -207,7 +209,7 @@
 
   const mintEnergy = async () => { 
     let energyContract = new ethers.Contract(ContractsConfigs.flow_ENERGY , ContractsConfigs.contractABI , $signer) 
-    let tx = await energyContract.flow( ContractsConfigs.flowStates_ENERGY_MINT.hex , 12323223, [] , {value : ethers.utils.parseEther('0')} ) 
+    let tx = await energyContract.flow( ContractsConfigs.flowStates_ENERGY_MINT , 12323223, [] , {value : ethers.utils.parseEther('0')} ) 
     let receipt = await tx.wait() 
     console.log(receipt)
   } 
