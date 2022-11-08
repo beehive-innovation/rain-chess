@@ -125,6 +125,8 @@
     claim = true 
     let gameData = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/processGame' , {gameId :gameID , winnerAddress : $signerAddress ,lichessToken: oAuth.accessToken.value}) 
     claim = true 
+    console.log(gameData);
+    
     signedContext = gameData.data.data 
 }
 

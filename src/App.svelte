@@ -17,7 +17,6 @@
     const data =async () =>{
       await $auth.init() 
     }
-
     data()
   }
 
