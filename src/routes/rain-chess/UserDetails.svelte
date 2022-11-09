@@ -195,7 +195,7 @@
                         <Button small on:click={() =>{mintNFT("gm")}}> Mint GM Badge </Button>
                     {:else}
                         {#if gmMetaData}
-                            <img src={gmMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
+                            <img src={gmMetaData?.data?.animation_url} width='144' height='144' alt='all' class='flex self-center bg-black' />
                         {/if}
                     {/if}
                 </SectionBody>
@@ -207,7 +207,7 @@
                         <Button small on:click={() =>{mintNFT("xp")}}> Mint XP Badge </Button>    
                     {:else}
                         {#if expMetaData}
-                            <img src={expMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
+                            <img src={expMetaData?.data?.animation_url} width='144' height='144' alt='all' class='flex self-center bg-black' />
                         {/if}
                     {/if}
                 </SectionBody>
@@ -219,7 +219,7 @@
                         <Button small on:click={() =>{mintNFT("improve")}}> Mint IMPV Badge </Button>
                     {:else}
                         {#if imprMetaData}
-                            <img src={imprMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
+                            <img src={imprMetaData?.data?.animation_url} width='144' height='144' alt='all' class='flex self-center bg-black' />
                         {/if}
                     {/if}
                 </SectionBody>
