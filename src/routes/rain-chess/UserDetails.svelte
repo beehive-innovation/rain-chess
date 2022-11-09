@@ -17,11 +17,11 @@
     let winBalance, gmBalance, expBalance, imprBalance
     let winMetaData, gmMetaData, expMetaData, imprMetaData, getNFTContext 
 
-    onMount(() => {
-        let tokenData = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
+    // onMount(() => {
+    //     let tokenData = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
         
-        getAccountData(tokenData)        
-    });
+    //     getAccountData(tokenData)        
+    // });
 
     $: if($signer){
         let tokenData = JSON.parse(localStorage.getItem('oauth2authcodepkce-state'))
@@ -77,7 +77,9 @@
             }
     }
 
-    const mintNFT = async (badge) => {        
+    const mintNFT = async (badge) => { 
+        console.log("badge", badge);
+               
         if(badge == 'win'){
             let tx = await winNFTCtrct.flow(ContractsConfigs.winTokenNFTFlowId , getNFTContext.username, [getNFTContext.nftContext]) 
             let receipt = await tx.wait()
@@ -178,7 +180,7 @@
                 <SectionBody>
                     {#if parseInt(winBalance?.toString()) == 0}
                         <img src="/assets/question-mark.png" width='90' height='90' alt='all' class='flex self-center' />
-                        <Button small on:click={() =>{() =>{mintNFT("win")}}}> Mint Win Badge </Button>
+                        <Button small on:click={() =>{mintNFT("win")}}> Mint Win Badge </Button>
                     {:else}
                         {#if winMetaData}
                             <img src={winMetaData?.data?.animation_url} width='144' height='144' alt='all' class='flex self-center bg-black' />
@@ -190,7 +192,7 @@
                 <SectionBody>
                     {#if parseInt(gmBalance?.toString()) == 0}
                         <img src="/assets/question-mark.png" width='90' height='90' alt='all' class='flex self-center' />
-                        <Button small on:click={() =>{() =>{mintNFT("gm")}}}> Mint GM Badge </Button>
+                        <Button small on:click={() =>{mintNFT("gm")}}> Mint GM Badge </Button>
                     {:else}
                         {#if gmMetaData}
                             <img src={gmMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
@@ -202,7 +204,7 @@
                 <SectionBody>
                     {#if parseInt(expBalance?.toString()) == 0}
                         <img src="/assets/question-mark.png" width='90' height='90' alt='all' class='flex self-center' />
-                        <Button small on:click={() =>{() =>{mintNFT("xp")}}}> Mint XP Badge </Button>    
+                        <Button small on:click={() =>{mintNFT("xp")}}> Mint XP Badge </Button>    
                     {:else}
                         {#if expMetaData}
                             <img src={expMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
@@ -214,7 +216,7 @@
                 <SectionBody>
                     {#if parseInt(imprBalance?.toString()) == 0}
                         <img src="/assets/question-mark.png" width='90' height='90' alt='all' class='flex self-center' />
-                        <Button small on:click={() =>{() =>{mintNFT("improve")}}}> Mint IMPV Badge </Button>
+                        <Button small on:click={() =>{mintNFT("improve")}}> Mint IMPV Badge </Button>
                     {:else}
                         {#if imprMetaData}
                             <img src={imprMetaData?.data?.animation_url} width='108' height='108' alt='all' class='flex self-center bg-black' />
