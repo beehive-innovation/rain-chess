@@ -12,7 +12,7 @@
   import IconLibrary from "$components/IconLibrary.svelte";
   import StakeNBuy from "$routes/rain-chess/Stake&Buy.svelte";
   import { getContext } from "svelte";
-  import { params, push } from "svelte-spa-router";
+  import Ring from "$components/Ring.svelte";
   import Select from "$components/Select.svelte";
   import {  EmissionsERC20JSVM, type StateConfig } from "rain-sdk"; 
   import { ethers } from 'ethers';  
@@ -20,22 +20,27 @@
   import LiChessLogin from "$routes/rain-chess/LiChessLogin.svelte";
 
   import ContractsConfigs from "../../../mumbai.json"
-  import { Logger, parseUnits } from "ethers/lib/utils";
   import UserDetails from "./UserDetails.svelte";
-    import Label from "./Label.svelte";
 
   $: oAuth = JSON.parse(localStorage.getItem('oauth2authcodepkce-state'))
   const { open } = getContext('simple-modal') 
 
+  enum TxStatus {
+    None,
+    AwaitingSignature,
+    AwaitingConfirmation,
+    Error,
+  }
+
   let fields: any = {};
 
-  let gameID = "", accDetails, signedContext
+  let gameID = "", accDetails, signedContext, txStatus = TxStatus.None
   let parserVmStateConfig: Writable<StateConfig> = writable(null)
   let simulatedResult , deployPromise, claim = false  
 
   let walletVerified = true, isWalletCorrect = false
   let isClaimRes = false, approved = false
-  let energyContract 
+  let energyContract, errorMsg
 
   const tokenOption = [ 
     {value: 0, label: "Select Token"},
@@ -49,17 +54,23 @@
 
   $: if($signer){   
     const authorizeAccount = async () => { 
+      txStatus = TxStatus.AwaitingSignature
       try { 
         let authToken = JSON.parse(localStorage.getItem('oauth2authcodepkce-state')) 
         oAuth = authToken
 
         let authResult = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/verifyAccount' , {address : $signerAddress , lichessToken : authToken?.accessToken?.value})  
+        console.log("authRes", authResult);
+        
+        txStatus = TxStatus.AwaitingConfirmation
         isWalletCorrect = true
         alert(`${authResult.data.message}`)
         
       } catch (error) {
         console.log("error : " ,error)  
         isWalletCorrect = false
+        errorMsg = error.message
+        txStatus = TxStatus.Error
         if(!error?.response?.data?.status && error?.response?.data?.code == 401){
           alert(`${error?.response?.data?.message}`)
         }
@@ -68,6 +79,7 @@
           alert(`${error?.response?.data?.message}`)
         }
       }
+      txStatus = TxStatus.None
   } 
   
     authorizeAccount()
@@ -136,11 +148,21 @@
     deployPromise = claimFlowReward();
   };  
 
-  const verifyWallet = async () => {
-    let sig = await $signer.signMessage("RAIN_LI_CHESS_ACCOUNT_VERFICATION")   
+  const registerWallet = async () => {
+    // txStatus = TxStatus.AwaitingSignature
+    try {
+      let sig = await $signer.signMessage("RAIN_LI_CHESS_ACCOUNT_VERFICATION")   
+      
+      let verifyReq = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
+      walletVerified = true
 
-    let verifyReq = await axios.post('https://gildlab-ipfs.in.ngrok.io/lichess/api/v2/registerWallet' , {signature : sig ,lichessToken: oAuth?.accessToken?.value }) 
-    walletVerified = true 
+    } catch (error) {
+      console.log("err", error);
+      
+      errorMsg = error
+      // txStatus = TxStatus.Error
+    }
+
   } 
 
   const mintEnergy = async () => { 
@@ -244,157 +266,176 @@
               <div class="flex flex-col">          
                 <div class="self-start flex flex-row items-center gap-x-2 pt-4">  
                   <span class="uppercase font-semibold">Click On Verify Button to map wallet with liChess account</span>
-                  <Button shrink  on:click={() =>{verifyWallet()}}> Verify Wallet </Button>
+                  <Button shrink  on:click={() =>{registerWallet()}}> Verify Wallet </Button>
                 </div>
               </div>
             </SectionBody>
           </Section>
-      {:else}  
-        <UserDetails />
-
+      {:else} 
+      <UserDetails />
+        {#if txStatus == TxStatus.None}
+        
         {#if isWalletCorrect}
-            <Section>
-              <SectionHeading>
-                <div class="mb-2 flex flex-row w-full space-y-4"> 
-                <div class="col-span-1 grid justify-center gap-y-4 pr-2">
-                  <img src="/assets/EnergyToken.png" width='30' height='30' alt='energyToken' class='me-4' />
-                </div>  
-                Claim Energy Token 
-                </div>
-              </SectionHeading>
-              {#if $signerAddress}
-              <SectionBody> 
-                  <span class="text-gray-600">Click below to claim game energy</span>
-                  <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
-                    <Button shrink on:click={() =>{mintEnergy()}}> Claim Energy </Button>
-                  </div> 
-                </SectionBody>
-              {:else}
-                <span class="p-4">Please Connect your wallet</span>
-              {/if}
-            </Section>
+              <Section>
+                <SectionHeading>
+                  <div class="mb-2 flex flex-row w-full space-y-4"> 
+                  <div class="col-span-1 grid justify-center gap-y-4 pr-2">
+                    <img src="/assets/EnergyToken.png" width='30' height='30' alt='energyToken' class='me-4' />
+                  </div>  
+                  Claim Energy Token 
+                  </div>
+                </SectionHeading>
+                {#if $signerAddress}
+                <SectionBody> 
+                    <span class="text-gray-600">Click below to claim game energy</span>
+                    <div class="self-start flex flex-row items-center gap-x-2 pt-4"> 
+                      <Button shrink on:click={() =>{mintEnergy()}}> Claim Energy </Button>
+                    </div> 
+                  </SectionBody>
+                {:else}
+                  <span class="p-4">Please Connect your wallet</span>
+                {/if}
+              </Section>
 
-            <Section>
-              <SectionHeading>Play</SectionHeading>
-              <SectionBody>
-                <div class="mb-2 flex flex-col w-full space-y-4"> 
-                  <div class="grid grid-cols-12 items-center" >
-                    <div class="col-span-1 grid justify-center gap-y-4">
-                      <img src="/assets/play.png" width='30' height='30' alt='play' class='me-4' />
+              <Section>
+                <SectionHeading>Play</SectionHeading>
+                <SectionBody>
+                  <div class="mb-2 flex flex-col w-full space-y-4"> 
+                    <div class="grid grid-cols-12 items-center" >
+                      <div class="col-span-1 grid justify-center gap-y-4">
+                        <img src="/assets/play.png" width='30' height='30' alt='play' class='me-4' />
+                      </div>
+                      <div class="col-span-11">
+                          <p>
+                            Play a game on lichess and paste the game ID only into the input form below to verify for game.
+                          </p>
+                      </div>
                     </div>
-                    <div class="col-span-11">
-                        <p>
-                          Play a game on lichess and paste the game ID only into the input form below to verify for game.
-                        </p>
+                    <div class="grid grid-cols-12 items-center" >
+                      <div class="col-span-1 grid justify-center gap-y-4">
+                        <img src="/assets/claim.png" width='32' height='32' alt='rewards' class='me-4' />
+                      </div>
+                      <div class="col-span-11">
+                          <p>
+                            Based on your game id and registration, you can claim tokens !! 
+      
+                          </p>
+                      </div>  
                     </div>
                   </div>
-                  <div class="grid grid-cols-12 items-center" >
-                    <div class="col-span-1 grid justify-center gap-y-4">
-                      <img src="/assets/claim.png" width='32' height='32' alt='rewards' class='me-4' />
+                  <span class="text-xl font-semibold">Claimable amount expression</span>
+                    <div class="max-w-prose">Enter the GameId and check claimable</div>
+                    <div class="grid grid-cols-2 gap-4">
+                      <Input
+                        type="text"
+                        placeholder="Game ID"
+                        bind:this={fields.gameID}
+                        bind:value={gameID}
+                        validator={required}
+                      >
+                        <span slot="label">Name</span>
+                      </Input>
+                      <span class="inline self-end"><Button shrink small on:click={handleOptionSubmit}> Check Claim </Button></span>
                     </div>
-                    <div class="col-span-11">
-                        <p>
-                          Based on your game id and registration, you can claim tokens !! 
-    
-                        </p>
-                    </div>  
-                  </div>
-                </div>
-                <span class="text-xl font-semibold">Claimable amount expression</span>
-                  <div class="max-w-prose">Enter the GameId and check claimable</div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <Input
-                      type="text"
-                      placeholder="Game ID"
-                      bind:this={fields.gameID}
-                      bind:value={gameID}
-                      validator={required}
-                    >
-                      <span slot="label">Name</span>
-                    </Input>
-                    <span class="inline self-end"><Button shrink small on:click={handleOptionSubmit}> Check Claim </Button></span>
-                  </div>
-                  <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
-                    <IconLibrary width={30} icon="tip" />
-                    <div class="max-w-prose">If you lose a game, you can only claim <span class="font-bold">Experience(XP) Token</span>!</div>
-                  </div>
-                  {#if isClaimRes}
-                    <div id="express" style="display: none;">
-                      <div class="grid grid-cols-7 gap-4 items-stretch" >
-                        <div class="col-span-4 flex flex-col gap-y-4 break-words">
-                          <Parser vmStateConfig={parserVmStateConfig} />
-                        </div>
-                        <div class="col-span-3">
-                          <div class="bg-amber-200 rounded-lg p-4 h-full ">
+                    <div class="flex flex-row gap-x-2 items-center  bg-violet-200 rounded-lg self-start p-3 max-w-prose">
+                      <IconLibrary width={30} icon="tip" />
+                      <div class="max-w-prose">If you lose a game, you can only claim <span class="font-bold">Experience(XP) Token</span>!</div>
+                    </div>
+                    {#if isClaimRes}
+                      <div id="express" style="display: none;">
+                        <div class="grid grid-cols-7 gap-4 items-stretch" >
+                          <div class="col-span-4 flex flex-col gap-y-4 break-words">
+                            <Parser vmStateConfig={parserVmStateConfig} />
+                          </div>
+                          <div class="col-span-3">
+                            <div class="bg-amber-200 rounded-lg p-4 h-full ">
 
-                            <div class="font-mono text-black text-sm break-words" >
-                              <span>Simulated output: </span>
-                              <span>
-                                {#if $signer}
-                                  {#if simulatedResult }
-                                    {simulatedResult?.toString()}
+                              <div class="font-mono text-black text-sm break-words" >
+                                <span>Simulated output: </span>
+                                <span>
+                                  {#if $signer}
+                                    {#if simulatedResult }
+                                      {simulatedResult?.toString()}
+                                    {:else}
+                                      ''
+                                    {/if}
                                   {:else}
-                                    ''
+                                    Connect your wallet to simulate your expression
                                   {/if}
-                                {:else}
-                                  Connect your wallet to simulate your expression
-                                {/if}
-                              </span>
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
-                          <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
-                        {#if !$signer}
-                          <span class="text-gray-600">Connect your wallet to deploy</span>
-                        {/if}
-                      </div>
-                    </div>
-                  {/if}
-              </SectionBody>
-            </Section> 
-
-            {#if claim}
-             
-              <Section>
-                <SectionHeading>Claim Rewards for game</SectionHeading>
-                <SectionBody>
-                  <div class="flex flex-col gap-4">          
-                    <Select
-                      items={tokenOption}
-                      bind:value={tokenOptionValue}
-                      on:change={checkApproval}
-                    >
-                      <span slot="label"> Select The Token to Claim Reward for: </span>
-                    </Select> 
-                    {#if approved}  
-                      <div class="self-start flex flex-row items-center gap-x-2"> 
-                        <Button shrink disabled={!$signer} on:click={() =>{claimToken()}}> Claim </Button>
-                        {#if !$signer}
-                        <span class="text-gray-600">Connect your wallet to deploy</span>
-                        {/if}
-                      </div>
-                    {:else}
-                      <div class="self-start flex flex-col items-start gap-x-2 gap-y-2"> 
-                        <div>Approve the {tokenOptionValue?.label} contract to spend your FENERGY20</div>
-                        <Button shrink disabled={!$signer} on:click={() =>{approveTokens()}}> Approve </Button>
-                        {#if !$signer}
-                        <span class="text-gray-600">Connect your wallet to deploy</span>
-                        {/if}
+                        <div class="self-start flex flex-row items-center gap-x-2 py-4"> 
+                            <Button shrink disabled={!$signer} on:click={handleClick}> Submit </Button>
+                          {#if !$signer}
+                            <span class="text-gray-600">Connect your wallet to deploy</span>
+                          {/if}
+                        </div>
                       </div>
                     {/if}
-                  </div>
                 </SectionBody>
-              </Section>
-            {/if}  
+              </Section> 
+
+              {#if claim}
+              
+                <Section>
+                  <SectionHeading>Claim Rewards for game</SectionHeading>
+                  <SectionBody>
+                    <div class="flex flex-col gap-4">          
+                      <Select
+                        items={tokenOption}
+                        bind:value={tokenOptionValue}
+                        on:change={checkApproval}
+                      >
+                        <span slot="label"> Select The Token to Claim Reward for: </span>
+                      </Select> 
+                      {#if approved}  
+                        <div class="self-start flex flex-row items-center gap-x-2"> 
+                          <Button shrink disabled={!$signer} on:click={() =>{claimToken()}}> Claim </Button>
+                          {#if !$signer}
+                          <span class="text-gray-600">Connect your wallet to deploy</span>
+                          {/if}
+                        </div>
+                      {:else}
+                        <div class="self-start flex flex-col items-start gap-x-2 gap-y-2"> 
+                          <div>Approve the {tokenOptionValue?.label} contract to spend your FENERGY20</div>
+                          <Button shrink disabled={!$signer} on:click={() =>{approveTokens()}}> Approve </Button>
+                          {#if !$signer}
+                          <span class="text-gray-600">Connect your wallet to deploy</span>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+                  </SectionBody>
+                </Section>
+              {/if}  
+          {/if}
+        {/if}
+        {#if txStatus == TxStatus.AwaitingSignature}
+          <div class="flex flex-col items-center gap-y-5 p-6">
+           <Ring color="#1D4ED8" />
+            <span class="text-lg font-semibold">Awaiting Verification...</span>
+          </div>
+        {/if}
+        {#if txStatus == TxStatus.AwaitingConfirmation}
+          <div class="flex flex-col items-center gap-y-5 p-6">
+           <Ring color="#1D4ED8" />
+            <span class="text-lg">Verification confirming...</span>
+          </div>
+        {/if}
+        {#if txStatus == TxStatus.Error}
+          <div class="flex flex-col items-center gap-y-5 p-6">
+            <span class="text-lg">Something went wrong.</span>
+            <span class="text-lg text-red-400">{errorMsg}</span>
+          </div>
         {/if}
       {/if}
-
-      {#if !$signer}
-      <span class="text-2xl font-semibold">Connect your wallet to get started.</span>
-      {/if}
       
+      {#if !$signer}
+        <span class="text-2xl font-semibold">Connect your wallet to get started.</span>
+      {/if}      
     </div>
 
     <div class="w-1/3 gap-y-4 bottom-0 top-16 right-0 border-l border-gray-400 ">

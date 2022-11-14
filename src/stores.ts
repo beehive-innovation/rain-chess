@@ -12,7 +12,8 @@ export const client = derived(
   selectedNetwork,
   $selectedNetwork => createClient({
     // url: "https://api.thegraph.com/subgraphs/name/beehive-innovation/rain-protocol-mumbai-v3"
-    url: AddressBook.getSubgraphEndpoint(Number($selectedNetwork.config.chainId))
+    url: "https://api.thegraph.com/subgraphs/name/vishalkale151071/cotrader"
+    // url: AddressBook.getSubgraphEndpoint(Number($selectedNetwork.config.chainId))
   })
 )
 
